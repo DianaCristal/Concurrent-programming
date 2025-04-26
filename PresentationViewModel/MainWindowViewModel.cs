@@ -20,19 +20,44 @@ namespace TP.ConcurrentProgramming.Presentation.ViewModel
     #region ctor
 
     public MainWindowViewModel() : this(null)
-    { }
+    {
+            StartCommand = new RelayCommand(() =>
+            {
+                Balls.Clear();
+                Start(BallsCount);
+            });
 
-    internal MainWindowViewModel(ModelAbstractApi modelLayerAPI)
+        }
+
+        internal MainWindowViewModel(ModelAbstractApi modelLayerAPI)
     {
       ModelLayer = modelLayerAPI == null ? ModelAbstractApi.CreateModel() : modelLayerAPI;
       Observer = ModelLayer.Subscribe<ModelIBall>(x => Balls.Add(x));
     }
 
-    #endregion ctor
 
-    #region public API
+        public RelayCommand StartCommand { get; }
 
-    public void Start(int numberOfBalls)
+        private int ballsCount = 5;
+        public int BallsCount
+        {
+            get => ballsCount;
+            set
+            {
+                if (ballsCount != value)
+                {
+                    ballsCount = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+
+        #endregion ctor
+
+        #region public API
+
+        public void Start(int numberOfBalls)
     {
       if (Disposed)
         throw new ObjectDisposedException(nameof(MainWindowViewModel));
