@@ -25,16 +25,15 @@ namespace TP.ConcurrentProgramming.Presentation.ViewModel
             {
                 Balls.Clear();
                 Start(BallsCount);
-            });
-
+                CanStart = false; // Dezaktywuj przycisk po pierwszym kliknięciu
+            }, () => CanStart);
         }
 
         internal MainWindowViewModel(ModelAbstractApi modelLayerAPI)
-    {
-      ModelLayer = modelLayerAPI == null ? ModelAbstractApi.CreateModel() : modelLayerAPI;
-      Observer = ModelLayer.Subscribe<ModelIBall>(x => Balls.Add(x));
-    }
-
+        {
+            ModelLayer = modelLayerAPI == null ? ModelAbstractApi.CreateModel() : modelLayerAPI;
+            Observer = ModelLayer.Subscribe<ModelIBall>(x => Balls.Add(x));
+        }
 
         public RelayCommand StartCommand { get; }
 
@@ -52,6 +51,20 @@ namespace TP.ConcurrentProgramming.Presentation.ViewModel
             }
         }
 
+        private bool canStart = true;
+        public bool CanStart
+        {
+            get => canStart;
+            private set
+            {
+                if (canStart != value)
+                {
+                    canStart = value;
+                    RaisePropertyChanged();
+                    StartCommand.RaiseCanExecuteChanged(); // bardzo ważne!
+                }
+            }
+        }
 
         #endregion ctor
 
@@ -62,7 +75,6 @@ namespace TP.ConcurrentProgramming.Presentation.ViewModel
       if (Disposed)
         throw new ObjectDisposedException(nameof(MainWindowViewModel));
       ModelLayer.Start(numberOfBalls);
-      Observer.Dispose();
     }
 
     public ObservableCollection<ModelIBall> Balls { get; } = new ObservableCollection<ModelIBall>();
