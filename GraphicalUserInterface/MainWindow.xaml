@@ -32,7 +32,7 @@
         <!-- Obszar gry -->
         <Viewbox Grid.Row="1" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center">
             <Border x:Name="GameArea" 
-                    Width="400" Height="300"
+                    Width="409" Height="309"
                     BorderThickness="4" 
                     BorderBrush="Green" 
                     Background="Beige">

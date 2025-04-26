@@ -67,13 +67,47 @@ namespace TP.ConcurrentProgramming.Presentation.Model
     private double TopBackingField;
     private double LeftBackingField;
 
-    private void NewPositionNotification(object sender, IPosition e)
-    {
-        double radius = Diameter / 2;
-        Top = e.y - radius; Left = e.x - radius;
-    }
+        //private void NewPositionNotification(object sender, IPosition e)
+        //{
+        //    double radius = Diameter / 2;
+        //    Top = e.y - radius; Left = e.x - radius;
+        //}
 
-    private void RaisePropertyChanged([CallerMemberName] string propertyName = "")
+        private void NewPositionNotification(object sender, IPosition e)
+        {
+            double radius = Diameter / 2;
+
+            // Współrzędne środka kulki
+            double centerX = e.x;
+            double centerY = e.y;
+
+            // Obliczamy Top i Left
+            double top = centerY - radius;
+            double left = centerX - radius;
+
+            // Pobieramy wymiary Canvasu (trzeba jakoś je znać!)
+            double canvasWidth = 800;  // <-- ustaw swoją faktyczną szerokość Canvasu
+            double canvasHeight = 600; // <-- ustaw swoją faktyczną wysokość Canvasu
+
+            // Ograniczenie: kulka nie może wyjść poza Canvas
+
+            if (left < 0)
+                left = 0;
+            else if (left + Diameter > canvasWidth)
+                left = canvasWidth - Diameter;
+
+            if (top < 0)
+                top = 0;
+            else if (top + Diameter > canvasHeight)
+                top = canvasHeight - Diameter;
+
+            // Ustawiamy końcowe wartości
+            Left = left;
+            Top = top;
+        }
+
+
+        private void RaisePropertyChanged([CallerMemberName] string propertyName = "")
     {
       PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }

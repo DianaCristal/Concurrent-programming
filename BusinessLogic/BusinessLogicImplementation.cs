@@ -97,6 +97,42 @@ namespace TP.ConcurrentProgramming.BusinessLogic
             moveTimer = new Timer(Move, null, TimeSpan.Zero, TimeSpan.FromMilliseconds(20));
         }
 
+        //private void Move(object? state)
+        //{
+        //    double tableWidth = BusinessLogicAbstractAPI.GetDimensions.TableWidth;
+        //    double tableHeight = BusinessLogicAbstractAPI.GetDimensions.TableHeight;
+        //    double radius = BusinessLogicAbstractAPI.GetDimensions.BallDimension / 2;
+
+        //    double newX = currentPosition.x + dataBall.Velocity.x;
+        //    double newY = currentPosition.y + dataBall.Velocity.y;
+
+        //    double velocityX = dataBall.Velocity.x;
+        //    double velocityY = dataBall.Velocity.y;
+
+        //    // Odbicia od ścian
+        //    if (newX - radius < 0 || newX + radius > tableWidth)
+        //    {
+        //        velocityX = -velocityX;
+        //        newX = Clamp(newX, radius, tableWidth - radius);
+        //    }
+
+        //    if (newY - radius < 0 || newY + radius > tableHeight)
+        //    {
+        //        velocityY = -velocityY;
+        //        newY = Clamp(newY, radius, tableHeight - radius);
+        //    }
+
+        //    // Zapis nowej prędkości
+        //    dataBall.Velocity = new LogicVector(velocityX, velocityY);
+
+        //    // Aktualizacja pozycji
+        //    currentPosition = new Position(newX, newY);
+
+        //    // AKTUALIZUJ widok — generuj event zmiany pozycji
+        //    (wrappedBall as Ball)?.RaisePositionChangeEventManually(currentPosition);
+        //}
+
+
         private void Move(object? state)
         {
             double tableWidth = BusinessLogicAbstractAPI.GetDimensions.TableWidth;
@@ -109,28 +145,37 @@ namespace TP.ConcurrentProgramming.BusinessLogic
             double velocityX = dataBall.Velocity.x;
             double velocityY = dataBall.Velocity.y;
 
-            // Odbicia od ścian
-            if (newX - radius < 0 || newX + radius > tableWidth)
+            // Odbicie od lewej i prawej
+            if (newX - radius < 0)
             {
+                newX = radius; // Przyklejamy kulkę na krawędź
                 velocityX = -velocityX;
-                newX = Clamp(newX, radius, tableWidth - radius);
             }
-
-            if (newY - radius < 0 || newY + radius > tableHeight)
+            else if (newX + radius > tableWidth)
             {
-                velocityY = -velocityY;
-                newY = Clamp(newY, radius, tableHeight - radius);
+                newX = tableWidth - radius;
+                velocityX = -velocityX;
             }
 
-            // Zapis nowej prędkości
+            // Odbicie od góry i dołu
+            if (newY - radius < 0)
+            {
+                newY = radius;
+                velocityY = -velocityY;
+            }
+            else if (newY + radius > tableHeight)
+            {
+                newY = tableHeight - radius;
+                velocityY = -velocityY;
+            }
+
             dataBall.Velocity = new LogicVector(velocityX, velocityY);
 
-            // Aktualizacja pozycji
             currentPosition = new Position(newX, newY);
 
-            // AKTUALIZUJ widok — generuj event zmiany pozycji
             (wrappedBall as Ball)?.RaisePositionChangeEventManually(currentPosition);
         }
+
 
         private double Clamp(double value, double min, double max)
         {
