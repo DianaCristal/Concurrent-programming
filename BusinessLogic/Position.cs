@@ -8,6 +8,8 @@
 //
 //_____________________________________________________________________________________________________________________________________
 
+using TP.ConcurrentProgramming.Data;
+
 namespace TP.ConcurrentProgramming.BusinessLogic
 {
   internal record Position : IPosition
@@ -28,4 +30,16 @@ namespace TP.ConcurrentProgramming.BusinessLogic
       y = posY;
     }
   }
+
+    internal record LogicVector : IVector
+    {
+        public double x { get; init; }
+        public double y { get; init; }
+
+        public LogicVector(double x, double y)
+        {
+            this.x = x;
+            this.y = y;
+        }
+    }
 }
