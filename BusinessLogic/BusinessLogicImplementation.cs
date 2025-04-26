@@ -42,20 +42,26 @@ namespace TP.ConcurrentProgramming.BusinessLogic
       if (Disposed)
         throw new ObjectDisposedException(nameof(BusinessLogicImplementation));
       if (upperLayerHandler == null)
-        throw new ArgumentNullException(nameof(upperLayerHandler));
-      layerBellow.Start(numberOfBalls, (startingPosition, databall) => upperLayerHandler(new Position(startingPosition.x, startingPosition.x), new Ball(databall)));
-    }
+    throw new ArgumentNullException(nameof(upperLayerHandler));
 
-    public override void UpdateDimensions(double width, double height)
-    {
-        BusinessLogicAbstractAPI.GetDimensions = new Dimensions(BusinessLogicAbstractAPI.GetDimensions.BallDimension, height, width);
-    }
+            layerBellow.Start(numberOfBalls, (startingPosition, databall) =>
+            {
+                var controller = new BallController(databall, new Position(startingPosition.x, startingPosition.y), upperLayerHandler);
+            });
 
-    #endregion BusinessLogicAbstractAPI
 
-    #region private
+        }
 
-    private bool Disposed = false;
+        public override void UpdateDimensions(double width, double height)
+        {
+            BusinessLogicAbstractAPI.GetDimensions = new Dimensions(10.0, 300.0, 400.0); // Stałe 400x300
+        }
+
+        #endregion BusinessLogicAbstractAPI
+
+        #region private
+
+        private bool Disposed = false;
 
     private readonly UnderneathLayerAPI layerBellow;
 
@@ -75,61 +81,63 @@ namespace TP.ConcurrentProgramming.BusinessLogic
     internal class BallController
     {
         private readonly Data.IBall dataBall;
-        private readonly Action<IPosition, IBall> upperLayerHandler;
         private readonly IBall wrappedBall;
         private IPosition currentPosition;
+        private readonly Timer moveTimer;
 
-        private readonly double radius = BusinessLogicAbstractAPI.GetDimensions.BallDimension / 2;
-        private readonly double tableWidth = BusinessLogicAbstractAPI.GetDimensions.TableWidth;
-        private readonly double tableHeight = BusinessLogicAbstractAPI.GetDimensions.TableHeight;
-
-        public BallController(Data.IBall ball, IPosition initialPosition, Action<IPosition, IBall> handler)
+        public BallController(Data.IBall ball, IPosition initialPosition, Action<IPosition, IBall> upperLayerHandler)
         {
             dataBall = ball;
             currentPosition = initialPosition;
-            upperLayerHandler = handler;
+            wrappedBall = new Ball(dataBall);
 
-            wrappedBall = new Ball(dataBall); // wrap w IBall z warstwy logic
-            dataBall.NewPositionNotification += OnPositionUpdate;
-
-            // Pierwsza pozycja (np. do View)
+            // Pierwsze wywołanie do utworzenia ModelBall w warstwie Model
             upperLayerHandler(currentPosition, wrappedBall);
+
+            moveTimer = new Timer(Move, null, TimeSpan.Zero, TimeSpan.FromMilliseconds(20));
         }
 
-        private void OnPositionUpdate(object? sender, Data.IVector newDelta)
+        private void Move(object? state)
         {
             double tableWidth = BusinessLogicAbstractAPI.GetDimensions.TableWidth;
             double tableHeight = BusinessLogicAbstractAPI.GetDimensions.TableHeight;
             double radius = BusinessLogicAbstractAPI.GetDimensions.BallDimension / 2;
 
-            double newX = currentPosition.x + newDelta.x;
-            double newY = currentPosition.y + newDelta.y;
-
-            double adjustedX = newX;
-            double adjustedY = newY;
+            double newX = currentPosition.x + dataBall.Velocity.x;
+            double newY = currentPosition.y + dataBall.Velocity.y;
 
             double velocityX = dataBall.Velocity.x;
             double velocityY = dataBall.Velocity.y;
 
-            if (adjustedX - radius < 0 || adjustedX + radius > tableWidth)
+            // Odbicia od ścian
+            if (newX - radius < 0 || newX + radius > tableWidth)
             {
                 velocityX = -velocityX;
-                adjustedX = currentPosition.x + velocityX;
+                newX = Clamp(newX, radius, tableWidth - radius);
             }
 
-            if (adjustedY - radius < 0 || adjustedY + radius > tableHeight)
+            if (newY - radius < 0 || newY + radius > tableHeight)
             {
                 velocityY = -velocityY;
-                adjustedY = currentPosition.y + velocityY;
+                newY = Clamp(newY, radius, tableHeight - radius);
             }
 
+            // Zapis nowej prędkości
             dataBall.Velocity = new LogicVector(velocityX, velocityY);
 
-            currentPosition = new Position(adjustedX, adjustedY);
+            // Aktualizacja pozycji
+            currentPosition = new Position(newX, newY);
 
-            upperLayerHandler(currentPosition, wrappedBall);
+            // AKTUALIZUJ widok — generuj event zmiany pozycji
+            (wrappedBall as Ball)?.RaisePositionChangeEventManually(currentPosition);
         }
 
+        private double Clamp(double value, double min, double max)
+        {
+            if (value < min) return min;
+            if (value > max) return max;
+            return value;
+        }
     }
 
-}
+    }

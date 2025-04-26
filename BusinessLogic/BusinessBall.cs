@@ -30,6 +30,11 @@ namespace TP.ConcurrentProgramming.BusinessLogic
       NewPositionNotification?.Invoke(this, new Position(e.x, e.y));
     }
 
+    internal void RaisePositionChangeEventManually(IPosition position)
+    {
+        NewPositionNotification?.Invoke(this, position);
+    }
+
     #endregion private
-  }
+    }
 }

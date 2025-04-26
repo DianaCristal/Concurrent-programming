@@ -15,29 +15,31 @@ namespace TP.ConcurrentProgramming.Data
 {
   internal class DataImplementation : DataAbstractAPI
   {
-    #region ctor
+        #region ctor
 
-    public DataImplementation()
-    {
-      MoveTimer = new Timer(Move, null, TimeSpan.Zero, TimeSpan.FromMilliseconds(100));
-    }
+        //public DataImplementation()
+        //{
+        //    MoveTimer = new Timer(Move, null, TimeSpan.Zero, TimeSpan.FromMilliseconds(100));
+        //}
 
-    #endregion ctor
+        #endregion ctor
 
-    #region DataAbstractAPI
+        #region DataAbstractAPI
 
-    public override void Start(int numberOfBalls, Action<IVector, IBall> upperLayerHandler)
+        public override void Start(int numberOfBalls, Action<IVector, IBall> upperLayerHandler)
     {
       if (Disposed)
         throw new ObjectDisposedException(nameof(DataImplementation));
       if (upperLayerHandler == null)
         throw new ArgumentNullException(nameof(upperLayerHandler));
-      Random random = new Random();
+
+            BallsList.Clear();
+            Random random = new Random();
       for (int i = 0; i < numberOfBalls; i++)
       {
         Vector startingPosition = new(random.Next(100, 400 - 100), random.Next(100, 400 - 100));
-        Ball newBall = new(startingPosition, new Vector((RandomGenerator.NextDouble() - 0.5) * 10, (RandomGenerator.NextDouble() - 0.5) * 10));
-        upperLayerHandler(startingPosition, newBall);
+                Ball newBall = new(startingPosition, new Vector((RandomGenerator.NextDouble() - 0.5) * 10, (RandomGenerator.NextDouble() - 0.5) * 10));
+                upperLayerHandler(startingPosition, newBall);
         BallsList.Add(newBall);
       }
     }
@@ -52,7 +54,6 @@ namespace TP.ConcurrentProgramming.Data
       {
         if (disposing)
         {
-          MoveTimer.Dispose();
           BallsList.Clear();
         }
         Disposed = true;
@@ -75,21 +76,15 @@ namespace TP.ConcurrentProgramming.Data
     //private bool disposedValue;
     private bool Disposed = false;
 
-    private readonly Timer MoveTimer;
+    private readonly Timer? MoveTimer;
     private Random RandomGenerator = new();
     private List<Ball> BallsList = [];
 
-    //private void Move(object? x)
-    //{
-    //  foreach (Ball item in BallsList)
-    //    item.Move(new Vector((RandomGenerator.NextDouble() - 0.5) * 10, (RandomGenerator.NextDouble() - 0.5) * 10));
-    //}
-
-    private void Move(object? x)
-    {
-        foreach (Ball item in BallsList)
-            item.Move(); // bez delta!
-    }
+        private void Move(object? x)
+        {
+            foreach (Ball item in BallsList)
+                item.Move();
+        }
 
     #endregion private
 

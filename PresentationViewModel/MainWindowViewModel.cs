@@ -74,6 +74,7 @@ namespace TP.ConcurrentProgramming.Presentation.ViewModel
             DebugDimensions = $"Table Width: {width:F2}, Height: {height:F2}";
         }
 
+
         #endregion ctor
 
         #region public API

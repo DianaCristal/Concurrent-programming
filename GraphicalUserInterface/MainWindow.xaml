@@ -13,39 +13,50 @@
         <vm:MainWindowViewModel />
     </Window.DataContext>
 
-    <DockPanel Margin="10">
-        <!-- Panel sterowania u góry -->
-        <StackPanel Orientation="Horizontal" DockPanel.Dock="Top" Margin="0,0,0,10">
+    <Grid>
+        <!-- Główna siatka -->
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <!-- Panel sterowania -->
+            <RowDefinition Height="*"/>
+            <!-- Obszar gry -->
+        </Grid.RowDefinitions>
+
+        <!-- Panel sterowania -->
+        <StackPanel Orientation="Horizontal" Grid.Row="0" Margin="0,0,0,10">
             <TextBlock Text="Liczba kul:" VerticalAlignment="Center" Margin="0,0,5,0"/>
             <TextBox Width="60" Text="{Binding BallsCount, UpdateSourceTrigger=PropertyChanged, ValidatesOnExceptions=True, NotifyOnValidationError=True}" Margin="0,0,10,0"/>
             <Button Content="Start" Command="{Binding StartCommand}" />
         </StackPanel>
 
         <!-- Obszar gry -->
-        <Border x:Name="GameArea" 
-                BorderThickness="4" 
-                BorderBrush="Green" 
-                Background="Beige"
-                HorizontalAlignment="Stretch"
-                VerticalAlignment="Stretch">
-            <ItemsControl ItemsSource="{Binding Balls}">
-                <ItemsControl.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <Canvas />
-                    </ItemsPanelTemplate>
-                </ItemsControl.ItemsPanel>
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <Ellipse Width="{Binding Diameter}" Height="{Binding Diameter}" Fill="Blue" />
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-                <ItemsControl.ItemContainerStyle>
-                    <Style TargetType="ContentPresenter">
-                        <Setter Property="Canvas.Top" Value="{Binding Top}" />
-                        <Setter Property="Canvas.Left" Value="{Binding Left}" />
-                    </Style>
-                </ItemsControl.ItemContainerStyle>
-            </ItemsControl>
-        </Border>
-    </DockPanel>
+        <Viewbox Grid.Row="1" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <Border x:Name="GameArea" 
+                    Width="400" Height="300"
+                    BorderThickness="4" 
+                    BorderBrush="Green" 
+                    Background="Beige">
+                <Canvas Width="400" Height="300">
+                    <ItemsControl ItemsSource="{Binding Balls}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <Canvas />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Ellipse Width="{Binding Diameter}" Height="{Binding Diameter}" Fill="Blue" />
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                        <ItemsControl.ItemContainerStyle>
+                            <Style TargetType="ContentPresenter">
+                                <Setter Property="Canvas.Top" Value="{Binding Top}" />
+                                <Setter Property="Canvas.Left" Value="{Binding Left}" />
+                            </Style>
+                        </ItemsControl.ItemContainerStyle>
+                    </ItemsControl>
+                </Canvas>
+            </Border>
+        </Viewbox>
+    </Grid>
 </Window>

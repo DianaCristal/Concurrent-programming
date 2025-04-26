@@ -8,10 +8,13 @@
 //_____________________________________________________________________________________________________________________________________
 
 using System;
+using System.Windows;
 using System.Diagnostics;
 using System.Reactive;
 using System.Reactive.Linq;
+using static System.Net.Mime.MediaTypeNames;
 using UnderneathLayerAPI = TP.ConcurrentProgramming.BusinessLogic.BusinessLogicAbstractAPI;
+using System.Threading;
 
 namespace TP.ConcurrentProgramming.Presentation.Model
 {
@@ -67,17 +70,22 @@ namespace TP.ConcurrentProgramming.Presentation.Model
     private readonly IObservable<EventPattern<BallChaneEventArgs>> eventObservable = null;
     private readonly UnderneathLayerAPI layerBellow = null;
 
-    private void StartHandler(BusinessLogic.IPosition position, BusinessLogic.IBall ball)
-    {
-      ModelBall newBall = new ModelBall(position.x, position.y, ball) { Diameter = 20.0 };
-      BallChanged.Invoke(this, new BallChaneEventArgs() { Ball = newBall });
-    }
+        private readonly SynchronizationContext _syncContext = SynchronizationContext.Current ?? new SynchronizationContext();
 
-    #endregion private
+        private void StartHandler(BusinessLogic.IPosition position, BusinessLogic.IBall ball)
+        {
+            _syncContext.Post(_ =>
+            {
+                ModelBall newBall = new ModelBall(position.x, position.y, ball) { Diameter = 20.0 };
+                BallChanged?.Invoke(this, new BallChaneEventArgs() { Ball = newBall });
+            }, null);
+        }
 
-    #region TestingInfrastructure
+        #endregion private
 
-    [Conditional("DEBUG")]
+        #region TestingInfrastructure
+
+        [Conditional("DEBUG")]
     internal void CheckObjectDisposed(Action<bool> returnInstanceDisposed)
     {
       returnInstanceDisposed(Disposed);
