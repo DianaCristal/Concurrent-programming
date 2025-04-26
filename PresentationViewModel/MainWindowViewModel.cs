@@ -65,6 +65,14 @@ namespace TP.ConcurrentProgramming.Presentation.ViewModel
                 }
             }
         }
+        public void UpdateTableSize(double width, double height)
+        {
+            if (Disposed)
+                throw new ObjectDisposedException(nameof(MainWindowViewModel));
+            ModelLayer.UpdateTableSize(width, height);
+
+            DebugDimensions = $"Table Width: {width:F2}, Height: {height:F2}";
+        }
 
         #endregion ctor
 
@@ -98,6 +106,20 @@ namespace TP.ConcurrentProgramming.Presentation.ViewModel
         // TODO: set large fields to null
         Disposed = true;
       }
+    }
+
+    private string debugDimensions;
+    public string DebugDimensions
+    {
+        get => debugDimensions;
+        set
+        {
+            if (debugDimensions != value)
+            {
+                debugDimensions = value;
+                RaisePropertyChanged();
+            }
+        }
     }
 
     public void Dispose()

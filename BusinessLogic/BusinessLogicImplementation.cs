@@ -46,6 +46,11 @@ namespace TP.ConcurrentProgramming.BusinessLogic
       layerBellow.Start(numberOfBalls, (startingPosition, databall) => upperLayerHandler(new Position(startingPosition.x, startingPosition.x), new Ball(databall)));
     }
 
+    public override void UpdateDimensions(double width, double height)
+    {
+        BusinessLogicAbstractAPI.GetDimensions = new Dimensions(BusinessLogicAbstractAPI.GetDimensions.BallDimension, height, width);
+    }
+
     #endregion BusinessLogicAbstractAPI
 
     #region private
@@ -93,11 +98,13 @@ namespace TP.ConcurrentProgramming.BusinessLogic
 
         private void OnPositionUpdate(object? sender, Data.IVector newDelta)
         {
-            // Nowa pozycja = aktualna + delta
+            double tableWidth = BusinessLogicAbstractAPI.GetDimensions.TableWidth;
+            double tableHeight = BusinessLogicAbstractAPI.GetDimensions.TableHeight;
+            double radius = BusinessLogicAbstractAPI.GetDimensions.BallDimension / 2;
+
             double newX = currentPosition.x + newDelta.x;
             double newY = currentPosition.y + newDelta.y;
 
-            // Sprawdź odbicia
             double adjustedX = newX;
             double adjustedY = newY;
 
@@ -116,15 +123,13 @@ namespace TP.ConcurrentProgramming.BusinessLogic
                 adjustedY = currentPosition.y + velocityY;
             }
 
-            // Zapisz nową prędkość (odbita)
             dataBall.Velocity = new LogicVector(velocityX, velocityY);
 
-            // Zapisz nową pozycję
             currentPosition = new Position(adjustedX, adjustedY);
 
-            // Powiadom prezentację
             upperLayerHandler(currentPosition, wrappedBall);
         }
+
     }
 
 }

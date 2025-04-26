@@ -7,7 +7,8 @@
         mc:Ignorable="d"
         Title="Presentation layer targeting reactive behaviour" 
         WindowState="Maximized"
-        WindowStartupLocation="CenterScreen">
+        WindowStartupLocation="CenterScreen"
+        SizeChanged="Window_SizeChanged">
     <Window.DataContext>
         <vm:MainWindowViewModel />
     </Window.DataContext>
@@ -16,12 +17,17 @@
         <!-- Panel sterowania u góry -->
         <StackPanel Orientation="Horizontal" DockPanel.Dock="Top" Margin="0,0,0,10">
             <TextBlock Text="Liczba kul:" VerticalAlignment="Center" Margin="0,0,5,0"/>
-            <TextBox Width="60" Text="{Binding BallsCount, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,10,0"/>
+            <TextBox Width="60" Text="{Binding BallsCount, UpdateSourceTrigger=PropertyChanged, ValidatesOnExceptions=True, NotifyOnValidationError=True}" Margin="0,0,10,0"/>
             <Button Content="Start" Command="{Binding StartCommand}" />
         </StackPanel>
 
         <!-- Obszar gry -->
-        <Border BorderThickness="4" BorderBrush="Green" Background="Beige">
+        <Border x:Name="GameArea" 
+                BorderThickness="4" 
+                BorderBrush="Green" 
+                Background="Beige"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Stretch">
             <ItemsControl ItemsSource="{Binding Balls}">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>

@@ -29,6 +29,10 @@ namespace TP.ConcurrentProgramming.Presentation.Model
       eventObservable = Observable.FromEventPattern<BallChaneEventArgs>(this, "BallChanged");
     }
 
+    public override void UpdateTableSize(double width, double height)
+    {
+      layerBellow.UpdateDimensions(width, height);
+    }
     #region ModelAbstractApi
 
     public override void Dispose()

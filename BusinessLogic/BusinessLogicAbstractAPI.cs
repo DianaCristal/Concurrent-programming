@@ -23,9 +23,10 @@ namespace TP.ConcurrentProgramming.BusinessLogic
 
     #region Layer API
 
-    public static readonly Dimensions GetDimensions = new(10.0, 10.0, 10.0);
+    public static Dimensions GetDimensions = new Dimensions(10.0, 10.0, 10.0);
 
     public abstract void Start(int numberOfBalls, Action<IPosition, IBall> upperLayerHandler);
+    public abstract void UpdateDimensions(double width, double height);
 
     #region IDisposable
 
@@ -52,7 +53,8 @@ namespace TP.ConcurrentProgramming.BusinessLogic
   /// </remarks>
   public record Dimensions(double BallDimension, double TableHeight, double TableWidth);
 
-  public interface IPosition
+
+public interface IPosition
   {
     double x { get; init; }
     double y { get; init; }
