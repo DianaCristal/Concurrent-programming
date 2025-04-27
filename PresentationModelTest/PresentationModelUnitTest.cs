@@ -62,12 +62,17 @@ namespace TP.ConcurrentProgramming.Presentation.Model.Test
 
       #region BusinessLogicAbstractAPI
 
-      public override void Dispose()
-      {
+    public override void Dispose()
+    {
         Disposed = true;
-      }
+    }
 
-      public override void Start(int numberOfBalls, Action<IPosition, BusinessLogic.IBall> upperLayerHandler)
+    public override void UpdateDimensions(double width, double height)
+    {
+        // No implementation needed for testing
+    }
+
+    public override void Start(int numberOfBalls, Action<IPosition, BusinessLogic.IBall> upperLayerHandler)
       {
         NumberOfBalls = numberOfBalls;
         Assert.IsNotNull(upperLayerHandler);

@@ -80,7 +80,12 @@ namespace TP.ConcurrentProgramming.Presentation.ViewModel.Test
         Started = numberOfBalls;
       }
 
-      public override IDisposable Subscribe(IObserver<ModelIBall> observer)
+            public override void UpdateTableSize(double width, double height)
+            {
+                // Do nothing
+            }
+
+            public override IDisposable Subscribe(IObserver<ModelIBall> observer)
       {
         Subscribed++;
         return new NullDisposable();
@@ -109,16 +114,21 @@ namespace TP.ConcurrentProgramming.Presentation.ViewModel.Test
 
       #region ctor
 
-      public ModelSimulatorFixture()
-      {
+        public ModelSimulatorFixture()
+        {
         eventObservable = Observable.FromEventPattern<BallChaneEventArgs>(this, "BallChanged");
-      }
+        }
 
-      #endregion ctor
+        public override void UpdateTableSize(double width, double height)
+        {
 
-      #region ModelAbstractApi fixture
+        }
 
-      public override IDisposable? Subscribe(IObserver<ModelIBall> observer)
+        #endregion ctor
+
+        #region ModelAbstractApi fixture
+
+            public override IDisposable? Subscribe(IObserver<ModelIBall> observer)
       {
         return eventObservable?.Subscribe(x => observer.OnNext(x.EventArgs.Ball), ex => observer.OnError(ex), () => observer.OnCompleted());
       }
