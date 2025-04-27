@@ -25,7 +25,12 @@
         <!-- Panel sterowania -->
         <StackPanel Orientation="Horizontal" Grid.Row="0" Margin="0,0,0,10">
             <TextBlock Text="Liczba kul:" VerticalAlignment="Center" Margin="0,0,5,0"/>
-            <TextBox Width="60" Text="{Binding BallsCount, UpdateSourceTrigger=PropertyChanged, ValidatesOnExceptions=True, NotifyOnValidationError=True}" Margin="0,0,10,0"/>
+          <!--  <TextBox Width="60" Text="{Binding BallsCount, UpdateSourceTrigger=PropertyChanged, ValidatesOnExceptions=True, NotifyOnValidationError=True}" Margin="0,0,10,0"/>-->
+            <TextBox Width="60"
+         Text="{Binding BallsCount, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True, NotifyOnValidationError=True}"
+         PreviewTextInput="NumberValidationTextBox"
+         Margin="0,0,10,0"/>
+
             <Button Content="Start" Command="{Binding StartCommand}" />
         </StackPanel>
 

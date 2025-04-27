@@ -9,6 +9,7 @@
 
 using System;
 using System.Windows;
+using System.Windows.Input;
 using TP.ConcurrentProgramming.Presentation.ViewModel;
 
 namespace TP.ConcurrentProgramming.PresentationView
@@ -47,5 +48,11 @@ namespace TP.ConcurrentProgramming.PresentationView
             viewModel.UpdateTableSize(width, height);
         }
     }
-  }
+
+        private void NumberValidationTextBox(object sender, TextCompositionEventArgs e)
+        {
+            e.Handled = !int.TryParse(e.Text, out _);
+        }
+
+    }
 }

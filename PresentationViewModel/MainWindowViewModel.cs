@@ -45,11 +45,19 @@ namespace TP.ConcurrentProgramming.Presentation.ViewModel
             {
                 if (ballsCount != value)
                 {
-                    ballsCount = value;
+                    // Walidacja: tylko liczby w zakresie 1-100
+                    if (value < 1)
+                        ballsCount = 1;
+                    else if (value > 100)
+                        ballsCount = 100;
+                    else
+                        ballsCount = value;
+
                     RaisePropertyChanged();
                 }
             }
         }
+
 
         private bool canStart = true;
         public bool CanStart
