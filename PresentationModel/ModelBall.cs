@@ -19,16 +19,21 @@ namespace TP.ConcurrentProgramming.Presentation.Model
 {
   internal class ModelBall : IBall
   {
-    public ModelBall(double top, double left, LogicIBall underneathBall)
-    {
-      TopBackingField = top;
-      LeftBackingField = left;
-      underneathBall.NewPositionNotification += NewPositionNotification;
-    }
+        private double canvasWidth;
+        private double canvasHeight;
 
-    #region IBall
+        public ModelBall(double top, double left, LogicIBall underneathBall, double canvasWidth, double canvasHeight)
+        {
+            TopBackingField = top;
+            LeftBackingField = left;
+            this.canvasWidth = canvasWidth;
+            this.canvasHeight = canvasHeight;
+            underneathBall.NewPositionNotification += NewPositionNotification;
+        }
 
-    public double Top
+        #region IBall
+
+        public double Top
     {
       get { return TopBackingField; }
       private set
@@ -77,20 +82,11 @@ namespace TP.ConcurrentProgramming.Presentation.Model
         {
             double radius = Diameter / 2;
 
-            // Współrzędne środka kulki
-            double centerX = e.x;
-            double centerY = e.y;
+            // Obliczamy Top i Left dla środka kulki
+            double top = e.y - radius;
+            double left = e.x - radius;
 
-            // Obliczamy Top i Left
-            double top = centerY - radius;
-            double left = centerX - radius;
-
-            // Pobieramy wymiary Canvasu (trzeba jakoś je znać!)
-            double canvasWidth = 800;  // <-- ustaw swoją faktyczną szerokość Canvasu
-            double canvasHeight = 600; // <-- ustaw swoją faktyczną wysokość Canvasu
-
-            // Ograniczenie: kulka nie może wyjść poza Canvas
-
+            // Ograniczenie do obszaru Canvas (dynamiczne!)
             if (left < 0)
                 left = 0;
             else if (left + Diameter > canvasWidth)
@@ -101,7 +97,7 @@ namespace TP.ConcurrentProgramming.Presentation.Model
             else if (top + Diameter > canvasHeight)
                 top = canvasHeight - Diameter;
 
-            // Ustawiamy końcowe wartości
+            // Ustawiamy właściwości
             Left = left;
             Top = top;
         }
