@@ -19,21 +19,21 @@ namespace TP.ConcurrentProgramming.Presentation.Model
 {
   internal class ModelBall : IBall
   {
-        private double canvasWidth;
-        private double canvasHeight;
+    private double canvasWidth;
+    private double canvasHeight;
 
-        public ModelBall(double top, double left, LogicIBall underneathBall, double canvasWidth, double canvasHeight)
-        {
-            TopBackingField = top;
-            LeftBackingField = left;
-            this.canvasWidth = canvasWidth;
-            this.canvasHeight = canvasHeight;
-            underneathBall.NewPositionNotification += NewPositionNotification;
-        }
+    public ModelBall(double top, double left, LogicIBall underneathBall, double canvasWidth, double canvasHeight)
+    {
+        TopBackingField = top;
+        LeftBackingField = left;
+        this.canvasWidth = canvasWidth;
+        this.canvasHeight = canvasHeight;
+        underneathBall.NewPositionNotification += NewPositionNotification;
+    }
 
-        #region IBall
+    #region IBall
 
-        public double Top
+    public double Top
     {
       get { return TopBackingField; }
       private set
@@ -72,38 +72,31 @@ namespace TP.ConcurrentProgramming.Presentation.Model
     private double TopBackingField;
     private double LeftBackingField;
 
-        //private void NewPositionNotification(object sender, IPosition e)
-        //{
-        //    double radius = Diameter / 2;
-        //    Top = e.y - radius; Left = e.x - radius;
-        //}
+    private void NewPositionNotification(object sender, IPosition e)
+    {
+        double radius = Diameter / 2;
 
-        private void NewPositionNotification(object sender, IPosition e)
-        {
-            double radius = Diameter / 2;
+        // Obliczamy Top i Left dla środka kulki
+        double top = e.y - radius;
+        double left = e.x - radius;
 
-            // Obliczamy Top i Left dla środka kulki
-            double top = e.y - radius;
-            double left = e.x - radius;
+        // Ograniczenie do obszaru Canvas (dynamiczne!)
+        if (left < 0)
+            left = 0;
+        else if (left + Diameter > canvasWidth)
+            left = canvasWidth - Diameter;
 
-            // Ograniczenie do obszaru Canvas (dynamiczne!)
-            if (left < 0)
-                left = 0;
-            else if (left + Diameter > canvasWidth)
-                left = canvasWidth - Diameter;
+        if (top < 0)
+            top = 0;
+        else if (top + Diameter > canvasHeight)
+            top = canvasHeight - Diameter;
 
-            if (top < 0)
-                top = 0;
-            else if (top + Diameter > canvasHeight)
-                top = canvasHeight - Diameter;
+        // Ustawiamy właściwości
+        Left = left;
+        Top = top;
+    }
 
-            // Ustawiamy właściwości
-            Left = left;
-            Top = top;
-        }
-
-
-        private void RaisePropertyChanged([CallerMemberName] string propertyName = "")
+    private void RaisePropertyChanged([CallerMemberName] string propertyName = "")
     {
       PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }

@@ -33,19 +33,19 @@ namespace TP.ConcurrentProgramming.Presentation.Model
     }
 
 
-        private double CanvasWidth = 400;
-        private double CanvasHeight = 300;
+    private double CanvasWidth = 400;
+    private double CanvasHeight = 300;
 
-        public override void UpdateTableSize(double width, double height)
-        {
-            CanvasWidth = width;
-            CanvasHeight = height;
-            layerBellow.UpdateDimensions(width, height);
-        }
+    public override void UpdateTableSize(double width, double height)
+    {
+        CanvasWidth = width;
+        CanvasHeight = height;
+        layerBellow.UpdateDimensions(width, height);
+    }
 
-        #region ModelAbstractApi
+    #region ModelAbstractApi
 
-        public override void Dispose()
+    public override void Dispose()
     {
       if (Disposed)
         throw new ObjectDisposedException(nameof(Model));
@@ -77,23 +77,23 @@ namespace TP.ConcurrentProgramming.Presentation.Model
     private readonly IObservable<EventPattern<BallChaneEventArgs>> eventObservable = null;
     private readonly UnderneathLayerAPI layerBellow = null;
 
-        private readonly SynchronizationContext _syncContext = SynchronizationContext.Current ?? new SynchronizationContext();
+    private readonly SynchronizationContext _syncContext = SynchronizationContext.Current ?? new SynchronizationContext();
 
-        private void StartHandler(BusinessLogic.IPosition position, BusinessLogic.IBall ball)
+    private void StartHandler(BusinessLogic.IPosition position, BusinessLogic.IBall ball)
+    {
+        _syncContext.Post(_ =>
         {
-            _syncContext.Post(_ =>
+            ModelBall newBall = new ModelBall(position.x, position.y, ball, CanvasWidth, CanvasHeight)
             {
-                ModelBall newBall = new ModelBall(position.x, position.y, ball, CanvasWidth, CanvasHeight)
-                {
-                    Diameter = 20.0
-                };
-                BallChanged?.Invoke(this, new BallChaneEventArgs() { Ball = newBall });
-            }, null);
-        }
+                Diameter = 20.0
+            };
+            BallChanged?.Invoke(this, new BallChaneEventArgs() { Ball = newBall });
+        }, null);
+    }
 
-        #endregion private
+    #endregion private
 
-        #region TestingInfrastructure
+    #region TestingInfrastructure
 
         [Conditional("DEBUG")]
     internal void CheckObjectDisposed(Action<bool> returnInstanceDisposed)

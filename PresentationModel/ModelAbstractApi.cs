@@ -31,9 +31,9 @@ namespace TP.ConcurrentProgramming.Presentation.Model
     public abstract void UpdateTableSize(double width, double height);
 
 
-        #region IObservable
+    #region IObservable
 
-        public abstract IDisposable Subscribe(IObserver<IBall> observer);
+    public abstract IDisposable Subscribe(IObserver<IBall> observer);
 
     #endregion IObservable
 

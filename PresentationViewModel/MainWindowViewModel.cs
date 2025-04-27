@@ -21,73 +21,71 @@ namespace TP.ConcurrentProgramming.Presentation.ViewModel
 
     public MainWindowViewModel() : this(null)
     {
-            StartCommand = new RelayCommand(() =>
-            {
-                Balls.Clear();
-                Start(BallsCount);
-                CanStart = false; // Dezaktywuj przycisk po pierwszym kliknięciu
-            }, () => CanStart);
-        }
-
-        internal MainWindowViewModel(ModelAbstractApi modelLayerAPI)
+        StartCommand = new RelayCommand(() =>
         {
-            ModelLayer = modelLayerAPI == null ? ModelAbstractApi.CreateModel() : modelLayerAPI;
-            Observer = ModelLayer.Subscribe<ModelIBall>(x => Balls.Add(x));
-        }
+            Balls.Clear();
+            Start(BallsCount);
+            CanStart = false; // Dezaktywuj przycisk po pierwszym kliknięciu
+        }, () => CanStart);
+    }
 
-        public RelayCommand StartCommand { get; }
+    internal MainWindowViewModel(ModelAbstractApi modelLayerAPI)
+    {
+        ModelLayer = modelLayerAPI == null ? ModelAbstractApi.CreateModel() : modelLayerAPI;
+        Observer = ModelLayer.Subscribe<ModelIBall>(x => Balls.Add(x));
+    }
 
-        private int ballsCount = 5;
-        public int BallsCount
+    public RelayCommand StartCommand { get; }
+
+    private int ballsCount = 5;
+    public int BallsCount
+    {
+        get => ballsCount;
+        set
         {
-            get => ballsCount;
-            set
+            if (ballsCount != value)
             {
-                if (ballsCount != value)
-                {
-                    // Walidacja: tylko liczby w zakresie 1-100
-                    if (value < 1)
-                        ballsCount = 1;
-                    else if (value > 100)
-                        ballsCount = 100;
-                    else
-                        ballsCount = value;
+                // Walidacja: tylko liczby w zakresie 1-100
+                if (value < 1)
+                    ballsCount = 1;
+                else if (value > 100)
+                    ballsCount = 100;
+                else
+                    ballsCount = value;
 
-                    RaisePropertyChanged();
-                }
+                RaisePropertyChanged();
             }
         }
+    }
 
-
-        private bool canStart = true;
-        public bool CanStart
+    private bool canStart = true;
+    public bool CanStart
+    {
+        get => canStart;
+        private set
         {
-            get => canStart;
-            private set
+            if (canStart != value)
             {
-                if (canStart != value)
-                {
-                    canStart = value;
-                    RaisePropertyChanged();
-                    StartCommand.RaiseCanExecuteChanged(); // bardzo ważne!
-                }
+                canStart = value;
+                RaisePropertyChanged();
+                StartCommand.RaiseCanExecuteChanged(); // bardzo ważne!
             }
         }
-        public void UpdateTableSize(double width, double height)
-        {
-            if (Disposed)
-                throw new ObjectDisposedException(nameof(MainWindowViewModel));
-            ModelLayer.UpdateTableSize(width, height);
+    }
+    public void UpdateTableSize(double width, double height)
+    {
+        if (Disposed)
+            throw new ObjectDisposedException(nameof(MainWindowViewModel));
+        ModelLayer.UpdateTableSize(width, height);
 
-            DebugDimensions = $"Table Width: {width:F2}, Height: {height:F2}";
-        }
+        DebugDimensions = $"Table Width: {width:F2}, Height: {height:F2}";
+    }
 
+    #endregion ctor
 
-        #endregion ctor
+    #region public API
 
-        #region public API
-
-        public void Start(int numberOfBalls)
+    public void Start(int numberOfBalls)
     {
       if (Disposed)
         throw new ObjectDisposedException(nameof(MainWindowViewModel));

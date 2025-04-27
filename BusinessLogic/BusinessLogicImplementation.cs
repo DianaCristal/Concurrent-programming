@@ -39,29 +39,26 @@ namespace TP.ConcurrentProgramming.BusinessLogic
 
     public override void Start(int numberOfBalls, Action<IPosition, IBall> upperLayerHandler)
     {
-      if (Disposed)
-        throw new ObjectDisposedException(nameof(BusinessLogicImplementation));
-      if (upperLayerHandler == null)
-    throw new ArgumentNullException(nameof(upperLayerHandler));
-
-            layerBellow.Start(numberOfBalls, (startingPosition, databall) =>
-            {
-                var controller = new BallController(databall, new Position(startingPosition.x, startingPosition.y), upperLayerHandler);
-            });
-
-
-        }
-
-        public override void UpdateDimensions(double width, double height)
+        if (Disposed)
+            throw new ObjectDisposedException(nameof(BusinessLogicImplementation));
+        if (upperLayerHandler == null)
+            throw new ArgumentNullException(nameof(upperLayerHandler));
+        layerBellow.Start(numberOfBalls, (startingPosition, databall) =>
         {
-            BusinessLogicAbstractAPI.GetDimensions = new Dimensions(10.0, 300.0, 400.0); // Stałe 400x300
-        }
+            var controller = new BallController(databall, new Position(startingPosition.x, startingPosition.y), upperLayerHandler);
+        });
+    }
 
-        #endregion BusinessLogicAbstractAPI
+    public override void UpdateDimensions(double width, double height)
+    {
+        BusinessLogicAbstractAPI.GetDimensions = new Dimensions(10.0, 300.0, 400.0); // Stałe 400x300
+    }
 
-        #region private
+    #endregion BusinessLogicAbstractAPI
 
-        private bool Disposed = false;
+    #region private
+
+    private bool Disposed = false;
 
     private readonly UnderneathLayerAPI layerBellow;
 
@@ -96,42 +93,6 @@ namespace TP.ConcurrentProgramming.BusinessLogic
 
             moveTimer = new Timer(Move, null, TimeSpan.Zero, TimeSpan.FromMilliseconds(20));
         }
-
-        //private void Move(object? state)
-        //{
-        //    double tableWidth = BusinessLogicAbstractAPI.GetDimensions.TableWidth;
-        //    double tableHeight = BusinessLogicAbstractAPI.GetDimensions.TableHeight;
-        //    double radius = BusinessLogicAbstractAPI.GetDimensions.BallDimension / 2;
-
-        //    double newX = currentPosition.x + dataBall.Velocity.x;
-        //    double newY = currentPosition.y + dataBall.Velocity.y;
-
-        //    double velocityX = dataBall.Velocity.x;
-        //    double velocityY = dataBall.Velocity.y;
-
-        //    // Odbicia od ścian
-        //    if (newX - radius < 0 || newX + radius > tableWidth)
-        //    {
-        //        velocityX = -velocityX;
-        //        newX = Clamp(newX, radius, tableWidth - radius);
-        //    }
-
-        //    if (newY - radius < 0 || newY + radius > tableHeight)
-        //    {
-        //        velocityY = -velocityY;
-        //        newY = Clamp(newY, radius, tableHeight - radius);
-        //    }
-
-        //    // Zapis nowej prędkości
-        //    dataBall.Velocity = new LogicVector(velocityX, velocityY);
-
-        //    // Aktualizacja pozycji
-        //    currentPosition = new Position(newX, newY);
-
-        //    // AKTUALIZUJ widok — generuj event zmiany pozycji
-        //    (wrappedBall as Ball)?.RaisePositionChangeEventManually(currentPosition);
-        //}
-
 
         private void Move(object? state)
         {
@@ -174,14 +135,6 @@ namespace TP.ConcurrentProgramming.BusinessLogic
             currentPosition = new Position(newX, newY);
 
             (wrappedBall as Ball)?.RaisePositionChangeEventManually(currentPosition);
-        }
-
-
-        private double Clamp(double value, double min, double max)
-        {
-            if (value < min) return min;
-            if (value > max) return max;
-            return value;
         }
     }
 

@@ -15,23 +15,14 @@ namespace TP.ConcurrentProgramming.Data
 {
   internal class DataImplementation : DataAbstractAPI
   {
-        #region ctor
-
-        //public DataImplementation()
-        //{
-        //    MoveTimer = new Timer(Move, null, TimeSpan.Zero, TimeSpan.FromMilliseconds(100));
-        //}
-
-        #endregion ctor
-
         #region DataAbstractAPI
 
-        public override void Start(int numberOfBalls, Action<IVector, IBall> upperLayerHandler)
+    public override void Start(int numberOfBalls, Action<IVector, IBall> upperLayerHandler)
     {
-      if (Disposed)
-        throw new ObjectDisposedException(nameof(DataImplementation));
-      if (upperLayerHandler == null)
-        throw new ArgumentNullException(nameof(upperLayerHandler));
+        if (Disposed)
+            throw new ObjectDisposedException(nameof(DataImplementation));
+        if (upperLayerHandler == null)
+            throw new ArgumentNullException(nameof(upperLayerHandler));
 
             BallsList.Clear();
             Random random = new Random();
@@ -73,18 +64,11 @@ namespace TP.ConcurrentProgramming.Data
 
     #region private
 
-    //private bool disposedValue;
     private bool Disposed = false;
 
     private readonly Timer? MoveTimer;
     private Random RandomGenerator = new();
     private List<Ball> BallsList = [];
-
-        private void Move(object? x)
-        {
-            foreach (Ball item in BallsList)
-                item.Move();
-        }
 
     #endregion private
 

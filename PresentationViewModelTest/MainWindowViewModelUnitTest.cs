@@ -16,19 +16,20 @@ using TP.ConcurrentProgramming.Presentation.Model;
 using ModelIBall = TP.ConcurrentProgramming.Presentation.Model.IBall;
 
 namespace TP.ConcurrentProgramming.Presentation.ViewModel.Test
-{
-  [TestClass]
-  public class MainWindowViewModelUnitTest
-  {
+    {
+    [TestClass]
+    public class MainWindowViewModelUnitTest
+    {
+
     [TestMethod]
     public void ConstructorTest()
     {
-      ModelNullFixture nullModelFixture = new();
-      Assert.AreEqual<int>(0, nullModelFixture.Disposed);
-      Assert.AreEqual<int>(0, nullModelFixture.Started);
-      Assert.AreEqual<int>(0, nullModelFixture.Subscribed);
-      using (MainWindowViewModel viewModel = new(nullModelFixture))
-      {
+        ModelNullFixture nullModelFixture = new();
+        Assert.AreEqual<int>(0, nullModelFixture.Disposed);
+        Assert.AreEqual<int>(0, nullModelFixture.Started);
+        Assert.AreEqual<int>(0, nullModelFixture.Subscribed);
+        using (MainWindowViewModel viewModel = new(nullModelFixture))
+        {
         Random random = new Random();
         int numberOfBalls = random.Next(1, 10);
         viewModel.Start(numberOfBalls);
@@ -36,60 +37,60 @@ namespace TP.ConcurrentProgramming.Presentation.ViewModel.Test
         Assert.AreEqual<int>(0, nullModelFixture.Disposed);
         Assert.AreEqual<int>(numberOfBalls, nullModelFixture.Started);
         Assert.AreEqual<int>(1, nullModelFixture.Subscribed);
-      }
-      Assert.AreEqual<int>(1, nullModelFixture.Disposed);
+        }
+        Assert.AreEqual<int>(1, nullModelFixture.Disposed);
     }
 
     [TestMethod]
     public void BehaviorTestMethod()
     {
-      ModelSimulatorFixture modelSimulator = new();
-      MainWindowViewModel viewModel = new(modelSimulator);
-      Assert.IsNotNull(viewModel.Balls);
-      Assert.AreEqual<int>(0, viewModel.Balls.Count);
-      Random random = new Random();
-      int numberOfBalls = random.Next(1, 10);
-      viewModel.Start(numberOfBalls);
-      Assert.AreEqual<int>(numberOfBalls, viewModel.Balls.Count);
-      viewModel.Dispose();
-      Assert.IsTrue(modelSimulator.Disposed);
-      Assert.AreEqual<int>(0, viewModel.Balls.Count);
+        ModelSimulatorFixture modelSimulator = new();
+        MainWindowViewModel viewModel = new(modelSimulator);
+        Assert.IsNotNull(viewModel.Balls);
+        Assert.AreEqual<int>(0, viewModel.Balls.Count);
+        Random random = new Random();
+        int numberOfBalls = random.Next(1, 10);
+        viewModel.Start(numberOfBalls);
+        Assert.AreEqual<int>(numberOfBalls, viewModel.Balls.Count);
+        viewModel.Dispose();
+        Assert.IsTrue(modelSimulator.Disposed);
+        Assert.AreEqual<int>(0, viewModel.Balls.Count);
     }
 
     #region testing infrastructure
 
     private class ModelNullFixture : ModelAbstractApi
     {
-      #region Test
+        #region Test
 
-      internal int Disposed = 0;
-      internal int Started = 0;
-      internal int Subscribed = 0;
+        internal int Disposed = 0;
+        internal int Started = 0;
+        internal int Subscribed = 0;
 
-      #endregion Test
+        #endregion Test
 
-      #region ModelAbstractApi
+        #region ModelAbstractApi
 
-      public override void Dispose()
-      {
+        public override void Dispose()
+        {
         Disposed++;
-      }
+        }
 
-      public override void Start(int numberOfBalls)
-      {
+        public override void Start(int numberOfBalls)
+        {
         Started = numberOfBalls;
-      }
+        }
 
-            public override void UpdateTableSize(double width, double height)
-            {
-                // Do nothing
-            }
+        public override void UpdateTableSize(double width, double height)
+        {
+            // Do nothing
+        }
 
-            public override IDisposable Subscribe(IObserver<ModelIBall> observer)
-      {
-        Subscribed++;
-        return new NullDisposable();
-      }
+        public override IDisposable Subscribe(IObserver<ModelIBall> observer)
+        {
+            Subscribed++;
+            return new NullDisposable();
+        }
 
       #endregion ModelAbstractApi
 
@@ -116,7 +117,7 @@ namespace TP.ConcurrentProgramming.Presentation.ViewModel.Test
 
         public ModelSimulatorFixture()
         {
-        eventObservable = Observable.FromEventPattern<BallChaneEventArgs>(this, "BallChanged");
+            eventObservable = Observable.FromEventPattern<BallChaneEventArgs>(this, "BallChanged");
         }
 
         public override void UpdateTableSize(double width, double height)
@@ -128,10 +129,10 @@ namespace TP.ConcurrentProgramming.Presentation.ViewModel.Test
 
         #region ModelAbstractApi fixture
 
-            public override IDisposable? Subscribe(IObserver<ModelIBall> observer)
-      {
-        return eventObservable?.Subscribe(x => observer.OnNext(x.EventArgs.Ball), ex => observer.OnError(ex), () => observer.OnCompleted());
-      }
+        public override IDisposable? Subscribe(IObserver<ModelIBall> observer)
+        {
+            return eventObservable?.Subscribe(x => observer.OnNext(x.EventArgs.Ball), ex => observer.OnError(ex), () => observer.OnCompleted());
+        }
 
       public override void Start(int numberOfBalls)
       {
