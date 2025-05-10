@@ -81,10 +81,9 @@ namespace TP.ConcurrentProgramming.Presentation.ViewModel.Test
         Started = numberOfBalls;
         }
 
-        public override void UpdateTableSize(double width, double height)
-        {
-            // Do nothing
-        }
+        public override double GetCanvasWidth() => 0;
+        public override double GetCanvasHeight() => 0;
+        public override double GetBallDimension() => 0;
 
         public override IDisposable Subscribe(IObserver<ModelIBall> observer)
         {
@@ -120,10 +119,9 @@ namespace TP.ConcurrentProgramming.Presentation.ViewModel.Test
             eventObservable = Observable.FromEventPattern<BallChaneEventArgs>(this, "BallChanged");
         }
 
-        public override void UpdateTableSize(double width, double height)
-        {
-
-        }
+        public override double GetCanvasWidth() => 0;
+        public override double GetCanvasHeight() => 0;
+        public override double GetBallDimension() => 0;
 
         #endregion ctor
 

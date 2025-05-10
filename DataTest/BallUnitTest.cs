@@ -40,20 +40,5 @@ namespace TP.ConcurrentProgramming.Data.Test
         Assert.AreEqual<IVector>(currenterPosition, newPosition);
         Assert.AreEqual<int>(2, numberOfCallBackCalled);
         }
-
-        [TestMethod]
-        public void SetPositionTestMethod()
-        {
-            Vector initialPosition = new Vector(10.0, 10.0);
-            Ball newInstance = new(initialPosition, new Vector(0.0, 0.0));
-            IVector curentPosition = new Vector(0.0, 0.0);
-            int numberOfCallBackCalled = 0;
-            newInstance.NewPositionNotification += (sender, position) => { Assert.IsNotNull(sender); curentPosition = position; numberOfCallBackCalled++; };
-
-            newInstance.SetPosition(new Vector(20.0, 20.0));
-
-            Assert.AreEqual<int>(1, numberOfCallBackCalled);
-            Assert.AreEqual<IVector>(new Vector(20.0, 20.0), curentPosition);
-        }
     }
 }

@@ -37,7 +37,7 @@
         <!-- Obszar gry -->
         <Border x:Name="GameArea"
             Grid.Row="1"
-            Width="{Binding CanvasWidth + 20}" Height="{Binding CanvasHeight + 20}"
+            Width="{Binding CanvasWidth}" Height="{Binding CanvasHeight}"
             BorderThickness="6"
             BorderBrush="Green"
             Background="Beige"

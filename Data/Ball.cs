@@ -45,12 +45,6 @@ namespace TP.ConcurrentProgramming.Data
         RaiseNewPositionChangeNotification();
     }
 
-    internal void SetPosition(Vector newPos)
-    {
-        Position = newPos;
-        RaiseNewPositionChangeNotification();
-    }
-
     #endregion private
     }
 }

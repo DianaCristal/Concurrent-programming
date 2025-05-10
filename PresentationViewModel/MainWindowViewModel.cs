@@ -55,7 +55,7 @@ namespace TP.ConcurrentProgramming.Presentation.ViewModel
     }
     public double CanvasWidth
     {
-        get => canvasWidth * ScaleFactor;
+        get => canvasWidth * ScaleFactor + 20;
     }
 
     public double HeightProportions
@@ -66,7 +66,7 @@ namespace TP.ConcurrentProgramming.Presentation.ViewModel
     private double canvasHeight;
     public double CanvasHeight
     {
-        get => canvasHeight * ScaleFactor;
+        get => canvasHeight * ScaleFactor + 20;
     }
 
     private double ballDimension;

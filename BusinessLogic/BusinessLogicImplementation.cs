@@ -72,65 +72,61 @@ namespace TP.ConcurrentProgramming.BusinessLogic
 
     internal class BallController
     {
-        private readonly Data.IBall dataBall;
-        private readonly IBall wrappedBall;
-        private IPosition currentPosition;
-        private readonly Timer moveTimer;
+        private readonly TP.ConcurrentProgramming.Data.IBall dataBall;
+        private readonly TP.ConcurrentProgramming.BusinessLogic.IBall logicBall;
 
         public BallController(Data.IBall ball, IPosition initialPosition, Action<IPosition, IBall> upperLayerHandler)
         {
             dataBall = ball;
-            currentPosition = initialPosition;
-            wrappedBall = new Ball(dataBall);
+            logicBall = new Ball(dataBall);
 
-            // Pierwsze wywołanie do utworzenia ModelBall w warstwie Model
-            upperLayerHandler(currentPosition, wrappedBall);
+            upperLayerHandler(initialPosition, logicBall);
 
-            moveTimer = new Timer(Move, null, TimeSpan.Zero, TimeSpan.FromMilliseconds(20));
+            logicBall.NewPositionNotification += OnNewPosition;
         }
-
-        private void Move(object? state)
+        private void OnNewPosition(object? sender, IPosition position)
         {
             double tableWidth = BusinessLogicAbstractAPI.GetDimensions.TableWidth;
             double tableHeight = BusinessLogicAbstractAPI.GetDimensions.TableHeight;
             double radius = BusinessLogicAbstractAPI.GetDimensions.BallDimension / 2;
 
-            double newX = currentPosition.x + dataBall.Velocity.x;
-            double newY = currentPosition.y + dataBall.Velocity.y;
+            double newX = position.x;
+            double newY = position.y;
 
             double velocityX = dataBall.Velocity.x;
             double velocityY = dataBall.Velocity.y;
 
-            // Odbicie od lewej i prawej
+            bool changed = false;
+
             if (newX - radius < 0)
             {
-                newX = radius; // Przyklejamy kulkę na krawędź
+                newX = radius;
                 velocityX = -velocityX;
+                changed = true;
             }
             else if (newX + radius > tableWidth)
             {
                 newX = tableWidth - radius;
                 velocityX = -velocityX;
+                changed = true;
             }
 
-            // Odbicie od góry i dołu
             if (newY - radius < 0)
             {
                 newY = radius;
                 velocityY = -velocityY;
+                changed = true;
             }
             else if (newY + radius > tableHeight)
             {
                 newY = tableHeight - radius;
                 velocityY = -velocityY;
+                changed = true;
             }
 
-            dataBall.Velocity = new LogicVector(velocityX, velocityY);
-
-            currentPosition = new Position(newX, newY);
-
-            (wrappedBall as Ball)?.RaisePositionChangeEventManually(currentPosition);
+            // Zmiana prędkości jeżeli changed jest true (jeżeli nastąpiła kolizja ze ścianą)
+            if (changed) { dataBall.Velocity = new LogicVector(velocityX, velocityY); }
         }
-    }
 
     }
+}
