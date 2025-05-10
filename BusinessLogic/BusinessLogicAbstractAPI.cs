@@ -23,10 +23,9 @@ namespace TP.ConcurrentProgramming.BusinessLogic
 
     #region Layer API
 
-    public static Dimensions GetDimensions = new Dimensions(10.0, 10.0, 10.0);
+    public static Dimensions GetDimensions = new Dimensions(20.0, 300.0, 400.0);
 
     public abstract void Start(int numberOfBalls, Action<IPosition, IBall> upperLayerHandler);
-    public abstract void UpdateDimensions(double width, double height);
 
     #region IDisposable
 

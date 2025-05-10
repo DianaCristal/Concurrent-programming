@@ -9,6 +9,7 @@
 
 using System;
 using System.ComponentModel;
+using TP.ConcurrentProgramming.BusinessLogic;
 
 namespace TP.ConcurrentProgramming.Presentation.Model
 {
@@ -25,11 +26,11 @@ namespace TP.ConcurrentProgramming.Presentation.Model
     {
       return modelInstance.Value;
     }
+    public abstract double GetCanvasWidth();
+    public abstract double GetCanvasHeight();
+    public abstract double GetBallDimension();
 
     public abstract void Start(int numberOfBalls);
-
-    public abstract void UpdateTableSize(double width, double height);
-
 
     #region IObservable
 

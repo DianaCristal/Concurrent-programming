@@ -43,16 +43,25 @@ namespace TP.ConcurrentProgramming.PresentationView
     {
         if (DataContext is MainWindowViewModel viewModel)
         {
-            double width = GameArea.ActualWidth;
-            double height = GameArea.ActualHeight;
-            viewModel.UpdateTableSize(width, height);
-        }
+            double windowWidth = e.NewSize.Width;
+            double windowHeight = e.NewSize.Height;
+
+            double paddingX = 40;
+            double paddingY = 100;
+
+            double scaleX = (windowWidth - paddingX) / viewModel.WidthProportions;
+            double scaleY = (windowHeight - paddingY) / viewModel.HeightProportions;
+
+            double scale = Math.Min(scaleX, scaleY); // zachowanie proporcji
+
+            viewModel.ScaleFactor = scale;
+            }
     }
 
-        private void NumberValidationTextBox(object sender, TextCompositionEventArgs e)
-        {
-            e.Handled = !int.TryParse(e.Text, out _);
-        }
+    private void NumberValidationTextBox(object sender, TextCompositionEventArgs e)
+    {
+        e.Handled = !int.TryParse(e.Text, out _);
+    }
 
     }
 }

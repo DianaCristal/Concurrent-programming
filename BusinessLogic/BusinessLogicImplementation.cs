@@ -49,11 +49,6 @@ namespace TP.ConcurrentProgramming.BusinessLogic
         });
     }
 
-    public override void UpdateDimensions(double width, double height)
-    {
-        BusinessLogicAbstractAPI.GetDimensions = new Dimensions(10.0, 300.0, 400.0); // Stałe 400x300
-    }
-
     #endregion BusinessLogicAbstractAPI
 
     #region private

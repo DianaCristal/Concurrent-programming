@@ -15,6 +15,7 @@ using System.Reactive.Linq;
 using static System.Net.Mime.MediaTypeNames;
 using UnderneathLayerAPI = TP.ConcurrentProgramming.BusinessLogic.BusinessLogicAbstractAPI;
 using System.Threading;
+using TP.ConcurrentProgramming.BusinessLogic;
 
 namespace TP.ConcurrentProgramming.Presentation.Model
 {
@@ -32,16 +33,15 @@ namespace TP.ConcurrentProgramming.Presentation.Model
       eventObservable = Observable.FromEventPattern<BallChaneEventArgs>(this, "BallChanged");
     }
 
+    private double canvasWidth = BusinessLogicAbstractAPI.GetDimensions.TableWidth;
 
-    private double CanvasWidth = 400;
-    private double CanvasHeight = 300;
+    private double canvasHeight = BusinessLogicAbstractAPI.GetDimensions.TableHeight;
 
-    public override void UpdateTableSize(double width, double height)
-    {
-        CanvasWidth = width;
-        CanvasHeight = height;
-        layerBellow.UpdateDimensions(width, height);
-    }
+    private double ballDimension = BusinessLogicAbstractAPI.GetDimensions.BallDimension;
+
+    public override double GetCanvasWidth() => canvasWidth;
+    public override double GetCanvasHeight() => canvasHeight;
+    public override double GetBallDimension() => ballDimension;
 
     #region ModelAbstractApi
 
@@ -83,9 +83,9 @@ namespace TP.ConcurrentProgramming.Presentation.Model
     {
         _syncContext.Post(_ =>
         {
-            ModelBall newBall = new ModelBall(position.x, position.y, ball, CanvasWidth, CanvasHeight)
+            ModelBall newBall = new ModelBall(position.x, position.y, ball, canvasWidth, canvasHeight)
             {
-                Diameter = 20.0
+                Diameter = ballDimension
             };
             BallChanged?.Invoke(this, new BallChaneEventArgs() { Ball = newBall });
         }, null);
@@ -95,7 +95,7 @@ namespace TP.ConcurrentProgramming.Presentation.Model
 
     #region TestingInfrastructure
 
-        [Conditional("DEBUG")]
+    [Conditional("DEBUG")]
     internal void CheckObjectDisposed(Action<bool> returnInstanceDisposed)
     {
       returnInstanceDisposed(Disposed);

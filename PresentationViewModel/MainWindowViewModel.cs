@@ -9,6 +9,7 @@
 
 using System;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using TP.ConcurrentProgramming.Presentation.Model;
 using TP.ConcurrentProgramming.Presentation.ViewModel.MVVMLight;
 using ModelIBall = TP.ConcurrentProgramming.Presentation.Model.IBall;
@@ -32,10 +33,47 @@ namespace TP.ConcurrentProgramming.Presentation.ViewModel
     internal MainWindowViewModel(ModelAbstractApi modelLayerAPI)
     {
         ModelLayer = modelLayerAPI == null ? ModelAbstractApi.CreateModel() : modelLayerAPI;
-        Observer = ModelLayer.Subscribe<ModelIBall>(x => Balls.Add(x));
+        canvasWidth = ModelLayer.GetCanvasWidth();
+        canvasHeight = ModelLayer.GetCanvasHeight();
+        ballDimension = ModelLayer.GetBallDimension();
+        Observer = ModelLayer.Subscribe<ModelIBall>(ball =>
+        {
+            Balls.Add(ball);
+            var vm = new BallViewModel(ball) { ScaleFactor = this.ScaleFactor };
+            BallViewModels.Add(vm);
+        });
+
     }
 
-    public RelayCommand StartCommand { get; }
+        public RelayCommand StartCommand { get; }
+
+    private double canvasWidth;
+
+    public double WidthProportions
+    {
+        get => canvasWidth;
+    }
+    public double CanvasWidth
+    {
+        get => canvasWidth * ScaleFactor;
+    }
+
+    public double HeightProportions
+    {
+        get => canvasHeight;
+    }
+
+    private double canvasHeight;
+    public double CanvasHeight
+    {
+        get => canvasHeight * ScaleFactor;
+    }
+
+    private double ballDimension;
+    public double BallDimension
+    {
+        get => ballDimension * ScaleFactor;
+    }
 
     private int ballsCount = 5;
     public int BallsCount
@@ -58,6 +96,27 @@ namespace TP.ConcurrentProgramming.Presentation.ViewModel
         }
     }
 
+    private double scaleFactor = 1.0;
+    public double ScaleFactor
+    {
+        get => scaleFactor;
+        set
+        {
+            if (scaleFactor != value)
+            {
+                scaleFactor = value;
+                RaisePropertyChanged(nameof(CanvasWidth));
+                RaisePropertyChanged(nameof(CanvasHeight));
+                RaisePropertyChanged(nameof(BallDimension));
+
+                foreach (var ballViewModel in BallViewModels)
+                {
+                    ballViewModel.ScaleFactor = scaleFactor;
+                }
+            }
+        }
+    }
+
     private bool canStart = true;
     public bool CanStart
     {
@@ -72,14 +131,6 @@ namespace TP.ConcurrentProgramming.Presentation.ViewModel
             }
         }
     }
-    public void UpdateTableSize(double width, double height)
-    {
-        if (Disposed)
-            throw new ObjectDisposedException(nameof(MainWindowViewModel));
-        ModelLayer.UpdateTableSize(width, height);
-
-        DebugDimensions = $"Table Width: {width:F2}, Height: {height:F2}";
-    }
 
     #endregion ctor
 
@@ -93,6 +144,8 @@ namespace TP.ConcurrentProgramming.Presentation.ViewModel
     }
 
     public ObservableCollection<ModelIBall> Balls { get; } = new ObservableCollection<ModelIBall>();
+
+    public ObservableCollection<BallViewModel> BallViewModels { get; } = new();
 
     #endregion public API
 
@@ -128,7 +181,9 @@ namespace TP.ConcurrentProgramming.Presentation.ViewModel
             }
         }
     }
-
+    public void UpdateDimensions(double windowWidth, double windowHeight)
+    {
+    }
     public void Dispose()
     {
       if (Disposed)
@@ -147,4 +202,46 @@ namespace TP.ConcurrentProgramming.Presentation.ViewModel
 
     #endregion private
   }
+
+    public class BallViewModel : INotifyPropertyChanged
+    {
+        private readonly IBall ball;
+        public BallViewModel(IBall ball) 
+        {
+            this.ball = ball;
+            ball.PropertyChanged += (s, e) =>
+            {
+                if (e.PropertyName == nameof(ball.Left))
+                    RaisePropertyChanged(nameof(ScaledLeft));
+                else if (e.PropertyName == nameof(ball.Top))
+                    RaisePropertyChanged(nameof(ScaledTop));
+            };
+        }
+
+        public double Left => ball.Left;
+        public double Top => ball.Top;
+        public double Diameter => ball.Diameter;
+
+        private double _scaleFactor = 1.0;
+        public double ScaleFactor
+        {
+            get => _scaleFactor;
+            set
+            {
+                _scaleFactor = value;
+                RaisePropertyChanged(nameof(ScaledLeft));
+                RaisePropertyChanged(nameof(ScaledTop));
+                RaisePropertyChanged(nameof(ScaledDiameter));
+            }
+        }
+
+        public double ScaledLeft => Left * ScaleFactor;
+        public double ScaledTop => Top * ScaleFactor;
+        public double ScaledDiameter => Diameter * ScaleFactor;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        private void RaisePropertyChanged(string propName) =>
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
+    }
+
 }
