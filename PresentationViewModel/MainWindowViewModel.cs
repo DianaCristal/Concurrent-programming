@@ -83,10 +83,10 @@ namespace TP.ConcurrentProgramming.Presentation.ViewModel
         {
             if (ballsCount != value)
             {
-                // Walidacja: tylko liczby w zakresie 1-100
+                // Walidacja: tylko liczby w zakresie 1-10
                 if (value < 1)
                     ballsCount = 1;
-                else if (value > 100)
+                else if (value > 10)
                     ballsCount = 100;
                 else
                     ballsCount = value;
