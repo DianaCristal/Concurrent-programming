@@ -26,7 +26,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "README", "README", "{8FB176
 		README.md = README.md
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fundamentals", "..\..\..\Downloads\TP-master\TP-master\ConcurrentProgramming\Fundamentals\Fundamentals.csproj", "{DB65CD0C-67C0-51FE-2F49-5DE1EA825D0E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fundamentals", "Fundamentals\Fundamentals.csproj", "{DB65CD0C-67C0-51FE-2F49-5DE1EA825D0E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
