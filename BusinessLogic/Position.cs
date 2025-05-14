@@ -10,6 +10,7 @@
 
 using TP.ConcurrentProgramming.Data;
 
+
 namespace TP.ConcurrentProgramming.BusinessLogic
 {
   internal record Position : IPosition

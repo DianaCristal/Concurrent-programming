@@ -9,7 +9,9 @@
 //_____________________________________________________________________________________________________________________________________
 
 using System.Diagnostics;
+using TP.ConcurrentProgramming.Fundamentals;
 using UnderneathLayerAPI = TP.ConcurrentProgramming.Data.DataAbstractAPI;
+
 
 namespace TP.ConcurrentProgramming.BusinessLogic
 {
@@ -76,6 +78,8 @@ namespace TP.ConcurrentProgramming.BusinessLogic
         private readonly TP.ConcurrentProgramming.BusinessLogic.IBall logicBall;
         private static List<BallController> allControllers = new();
         private static readonly object syncLock = new();
+        private static BallCollisionMonitor monitor = new();
+
 
         public BallController(Data.IBall ball, IPosition initialPosition, Action<IPosition, IBall> upperLayerHandler)
         {
@@ -86,10 +90,8 @@ namespace TP.ConcurrentProgramming.BusinessLogic
 
             logicBall.NewPositionNotification += OnNewPosition;
 
-            lock (syncLock)
-            {
-                allControllers.Add(this);
-            }
+            monitor.RegisterController(this);
+
         }
         private void OnNewPosition(object? sender, IPosition position)
         {
@@ -134,11 +136,9 @@ namespace TP.ConcurrentProgramming.BusinessLogic
             // Zmiana prędkości jeżeli changed jest true (jeżeli nastąpiła kolizja ze ścianą)
             if (changed) { dataBall.Velocity = new LogicVector(velocityX, velocityY); }
 
-            lock (syncLock)
-            {
-                foreach (BallController other in allControllers)
-                {
-                    if (other == this) continue;
+            foreach (BallController other in monitor.GetControllers())
+              {
+                if (other == this) continue;
 
                     double dx = this.dataBall.Position.x - other.dataBall.Position.x;
                     double dy = this.dataBall.Position.y - other.dataBall.Position.y;
@@ -151,7 +151,7 @@ namespace TP.ConcurrentProgramming.BusinessLogic
                     }
                 }
             }
-        }
+        
         private void HandleCollision(Data.IBall b1, Data.IBall b2)
         {
             double dx = b1.Position.x - b2.Position.x;
@@ -183,4 +183,37 @@ namespace TP.ConcurrentProgramming.BusinessLogic
             b2.Velocity = v2;
         }
     }
+
+    internal class BallCollisionMonitor : HoareMonitor
+    {
+        private readonly List<BallController> controllers = new();
+        private readonly ICondition collisionCondition;
+
+        public BallCollisionMonitor()
+        {
+            collisionCondition = CreateCondition();
+        }
+
+        public void RegisterController(BallController ctrl)
+        {
+            EnterMonitor();
+            controllers.Add(ctrl);
+            ExitMonitor();
+        }
+
+        public List<BallController> GetControllers()
+        {
+            EnterMonitor();
+            var copy = controllers.ToList();
+            ExitMonitor();
+            return copy;
+        }
+
+        protected override ISignal CreateSignal()
+        {
+            throw new NotImplementedException("CreateSignal not used in this monitor.");
+        }
+
+    }
+
 }

@@ -13,6 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\..\Downloads\TP-master\TP-master\ConcurrentProgramming\Fundamentals\Fundamentals.csproj" />
     <ProjectReference Include="..\Data\Data.csproj" />
   </ItemGroup>
 
