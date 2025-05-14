@@ -30,9 +30,9 @@ namespace TP.ConcurrentProgramming.BusinessLogic
       NewPositionNotification?.Invoke(this, new Position(e.x, e.y));
     }
 
-    internal void RaisePositionChangeEventManually(IPosition position)
+    internal void ReflectFromWalls(double width, double height)
     {
-        NewPositionNotification?.Invoke(this, position);
+        // odbicia od ścian
     }
 
     #endregion private

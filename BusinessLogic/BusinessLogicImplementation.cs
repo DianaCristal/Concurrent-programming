@@ -45,7 +45,7 @@ namespace TP.ConcurrentProgramming.BusinessLogic
             throw new ArgumentNullException(nameof(upperLayerHandler));
         layerBellow.Start(numberOfBalls, (startingPosition, databall) =>
         {
-            var controller = new BallController(databall, new Position(startingPosition.x, startingPosition.y), upperLayerHandler);
+            BallController controller = new BallController(databall, new Position(startingPosition.x, startingPosition.y), upperLayerHandler);
         });
     }
 
@@ -74,6 +74,8 @@ namespace TP.ConcurrentProgramming.BusinessLogic
     {
         private readonly TP.ConcurrentProgramming.Data.IBall dataBall;
         private readonly TP.ConcurrentProgramming.BusinessLogic.IBall logicBall;
+        private static List<BallController> allControllers = new();
+        private static readonly object syncLock = new();
 
         public BallController(Data.IBall ball, IPosition initialPosition, Action<IPosition, IBall> upperLayerHandler)
         {
@@ -83,6 +85,11 @@ namespace TP.ConcurrentProgramming.BusinessLogic
             upperLayerHandler(initialPosition, logicBall);
 
             logicBall.NewPositionNotification += OnNewPosition;
+
+            lock (syncLock)
+            {
+                allControllers.Add(this);
+            }
         }
         private void OnNewPosition(object? sender, IPosition position)
         {
@@ -126,7 +133,54 @@ namespace TP.ConcurrentProgramming.BusinessLogic
 
             // Zmiana prędkości jeżeli changed jest true (jeżeli nastąpiła kolizja ze ścianą)
             if (changed) { dataBall.Velocity = new LogicVector(velocityX, velocityY); }
-        }
 
+            lock (syncLock)
+            {
+                foreach (BallController other in allControllers)
+                {
+                    if (other == this) continue;
+
+                    double dx = this.dataBall.Position.x - other.dataBall.Position.x;
+                    double dy = this.dataBall.Position.y - other.dataBall.Position.y;
+                    double distanceSquared = dx * dx + dy * dy;
+                    double radiusSum = (this.dataBall.Diameter + other.dataBall.Diameter) / 2;
+
+                    if (distanceSquared < radiusSum * radiusSum)
+                    {
+                        HandleCollision(this.dataBall, other.dataBall);
+                    }
+                }
+            }
+        }
+        private void HandleCollision(Data.IBall b1, Data.IBall b2)
+        {
+            double dx = b1.Position.x - b2.Position.x;
+            double dy = b1.Position.y - b2.Position.y;
+
+            double distSquared = dx * dx + dy * dy;
+            double radiusSum = (b1.Diameter + b2.Diameter) / 2;
+
+            if (distSquared >= radiusSum * radiusSum)
+                return;
+
+            double dvx = b1.Velocity.x - b2.Velocity.x;
+            double dvy = b1.Velocity.y - b2.Velocity.y;
+
+            double dotProduct = dvx * dx + dvy * dy;
+            if (dotProduct >= 0) return;
+
+            double m1 = b1.Mass;
+            double m2 = b2.Mass;
+
+            double collisionScale = (2 * dotProduct) / ((m1 + m2) * distSquared);
+            double fx = collisionScale * dx;
+            double fy = collisionScale * dy;
+
+            var v1 = new LogicVector(b1.Velocity.x - fx * m2, b1.Velocity.y - fy * m2);
+            var v2 = new LogicVector(b2.Velocity.x + fx * m1, b2.Velocity.y + fy * m1);
+
+            b1.Velocity = v1;
+            b2.Velocity = v2;
+        }
     }
 }

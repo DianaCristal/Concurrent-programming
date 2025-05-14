@@ -30,17 +30,9 @@ namespace TP.ConcurrentProgramming.Data
                 Ball newBall = new(startingPosition, new Vector((RandomGenerator.NextDouble() - 0.5) * 10, (RandomGenerator.NextDouble() - 0.5) * 10));
                 upperLayerHandler(startingPosition, newBall);
                 BallsList.Add(newBall);
+                newBall.StartMoving();
             }
-            MoveTimer = new Timer(MoveBalls, null, TimeSpan.Zero, TimeSpan.FromMilliseconds(20));
         }
-
-    private void MoveBalls(object? state)
-    {
-        foreach (var ball in BallsList)
-        {
-            ball.Move();
-        }
-    }
 
     #region IDisposable
 
@@ -71,8 +63,8 @@ namespace TP.ConcurrentProgramming.Data
 
     private bool Disposed = false;
 
-        // Change the declaration of the `MoveTimer` field to make it writable.
-        private Timer? MoveTimer;
+    // Change the declaration of the `MoveTimer` field to make it writable.
+    private Timer? MoveTimer;
     private Random RandomGenerator = new();
     private List<Ball> BallsList = [];
 
