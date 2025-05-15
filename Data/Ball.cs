@@ -26,9 +26,37 @@ namespace TP.ConcurrentProgramming.Data
 
         public event EventHandler<IVector>? NewPositionNotification;
 
-        public IVector Velocity { get; set; }
+        //private Vector _position;
 
-        public IVector Position => _position;
+        //public IVector Velocity { get; set; }
+
+        //public IVector Position => _position;
+
+
+        private Vector _position;
+        private IVector _velocity;
+        private readonly object _lock = new();
+
+        public IVector Position
+        {
+            get
+            {
+                lock (_lock) { return _position; }
+            }
+        }
+
+        public IVector Velocity
+        {
+            get
+            {
+                lock (_lock) { return _velocity; }
+            }
+            set
+            {
+                lock (_lock) { _velocity = value; }
+            }
+        }
+
 
         public double Mass { get; } = 1.0; 
         public double Diameter { get; } = 20.0;
@@ -40,7 +68,7 @@ namespace TP.ConcurrentProgramming.Data
 
         #region private
 
-        private Vector _position;
+        
 
         private void RaiseNewPositionChangeNotification()
         {
@@ -59,7 +87,12 @@ namespace TP.ConcurrentProgramming.Data
             {
                 while (!token.IsCancellationRequested)
                 {
-                    _position = new Vector(_position.x + Velocity.x, _position.y + Velocity.y);
+                    lock (_lock)
+                    {
+                        _position = new Vector(_position.x + _velocity.x, _position.y + _velocity.y);
+                    }
+
+                    //_position = new Vector(_position.x + Velocity.x, _position.y + Velocity.y);
                     RaiseNewPositionChangeNotification();
                     await Task.Delay(20, token);
                 }

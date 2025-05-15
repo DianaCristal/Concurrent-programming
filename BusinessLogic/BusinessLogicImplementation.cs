@@ -22,16 +22,22 @@ namespace TP.ConcurrentProgramming.BusinessLogic
     public BusinessLogicImplementation() : this(null)
     { }
 
-    internal BusinessLogicImplementation(UnderneathLayerAPI? underneathLayer)
-    {
-      layerBellow = underneathLayer == null ? UnderneathLayerAPI.GetDataLayer() : underneathLayer;
-    }
+        internal BusinessLogicImplementation(UnderneathLayerAPI? underneathLayer)
+        {
+            layerBellow = underneathLayer == null ? UnderneathLayerAPI.GetDataLayer() : underneathLayer;
+        }
 
-    #endregion ctor
+        //internal BusinessLogicImplementation(UnderneathLayerAPI underneathLayer)
+        //{
+        //    layerBellow = underneathLayer ?? throw new ArgumentNullException(nameof(underneathLayer));
+        //}
 
-    #region BusinessLogicAbstractAPI
 
-    public override void Dispose()
+        #endregion ctor
+
+        #region BusinessLogicAbstractAPI
+
+        public override void Dispose()
     {
       if (Disposed)
         throw new ObjectDisposedException(nameof(BusinessLogicImplementation));
@@ -176,11 +182,23 @@ namespace TP.ConcurrentProgramming.BusinessLogic
             double fx = collisionScale * dx;
             double fy = collisionScale * dy;
 
-            var v1 = new LogicVector(b1.Velocity.x - fx * m2, b1.Velocity.y - fy * m2);
-            var v2 = new LogicVector(b2.Velocity.x + fx * m1, b2.Velocity.y + fy * m1);
+            //var v1 = new LogicVector(b1.Velocity.x - fx * m2, b1.Velocity.y - fy * m2);
+            //var v2 = new LogicVector(b2.Velocity.x + fx * m1, b2.Velocity.y + fy * m1);
+
+
+            LogicVector v1 = new LogicVector(b1.Velocity.x - fx * m2, b1.Velocity.y - fy * m2);
+            LogicVector v2 = new LogicVector(b2.Velocity.x + fx * m1, b2.Velocity.y + fy * m1);
 
             b1.Velocity = v1;
             b2.Velocity = v2;
+
+            double overlap = (radiusSum - Math.Sqrt(distSquared)) / 2;
+            double correctionX = (dx / Math.Sqrt(distSquared)) * overlap;
+            double correctionY = (dy / Math.Sqrt(distSquared)) * overlap;
+
+            b1.CorrectPosition(correctionX, correctionY);
+            b2.CorrectPosition(-correctionX, -correctionY);
+
         }
     }
 
@@ -204,7 +222,9 @@ namespace TP.ConcurrentProgramming.BusinessLogic
         public List<BallController> GetControllers()
         {
             EnterMonitor();
-            var copy = controllers.ToList();
+            //var copy = controllers.ToList();
+            List<BallController> copy = controllers.ToList();
+
             ExitMonitor();
             return copy;
         }

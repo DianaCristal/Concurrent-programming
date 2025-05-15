@@ -27,13 +27,21 @@ namespace TP.ConcurrentProgramming.Presentation.Model
     internal ModelImplementation() : this(null)
     { }
 
-    internal ModelImplementation(UnderneathLayerAPI underneathLayer)
-    {
-      layerBellow = underneathLayer == null ? UnderneathLayerAPI.GetBusinessLogicLayer() : underneathLayer;
-      eventObservable = Observable.FromEventPattern<BallChaneEventArgs>(this, "BallChanged");
-    }
+        internal ModelImplementation(UnderneathLayerAPI underneathLayer)
+        {
+            layerBellow = underneathLayer == null ? UnderneathLayerAPI.GetBusinessLogicLayer() : underneathLayer;
+            eventObservable = Observable.FromEventPattern<BallChaneEventArgs>(this, "BallChanged");
+        }
 
-    private double canvasWidth = BusinessLogicAbstractAPI.GetDimensions.TableWidth;
+
+        //internal ModelImplementation(BusinessLogicAbstractAPI logicLayer)
+        //{
+        //    layerBellow = logicLayer ?? throw new ArgumentNullException(nameof(logicLayer));
+        //    eventObservable = Observable.FromEventPattern<BallChaneEventArgs>(this, "BallChanged");
+        //}
+
+
+        private double canvasWidth = BusinessLogicAbstractAPI.GetDimensions.TableWidth;
 
     private double canvasHeight = BusinessLogicAbstractAPI.GetDimensions.TableHeight;
 
@@ -77,9 +85,10 @@ namespace TP.ConcurrentProgramming.Presentation.Model
     private readonly IObservable<EventPattern<BallChaneEventArgs>> eventObservable = null;
     private readonly UnderneathLayerAPI layerBellow = null;
 
-    private readonly SynchronizationContext _syncContext = SynchronizationContext.Current ?? new SynchronizationContext();
+        private readonly SynchronizationContext _syncContext = SynchronizationContext.Current ?? new SynchronizationContext();
 
-    private void StartHandler(BusinessLogic.IPosition position, BusinessLogic.IBall ball)
+
+        private void StartHandler(BusinessLogic.IPosition position, BusinessLogic.IBall ball)
     {
         _syncContext.Post(_ =>
         {

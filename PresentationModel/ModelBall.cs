@@ -101,11 +101,18 @@ namespace TP.ConcurrentProgramming.Presentation.Model
       PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 
-    #endregion private
+        public void UpdateCanvasSize(double width, double height)
+        {
+            canvasWidth = width;
+            canvasHeight = height;
+        }
 
-    #region testing instrumentation
 
-    [Conditional("DEBUG")]
+        #endregion private
+
+        #region testing instrumentation
+
+        [Conditional("DEBUG")]
     internal void SetLeft(double x)
     { Left = x; }
 
