@@ -89,7 +89,7 @@ namespace TP.ConcurrentProgramming.Presentation.ViewModel
                 if (value < 1)
                     ballsCount = 1;
                 else if (value > 10)
-                    ballsCount = 100;
+                    ballsCount = 10;
                 else
                     ballsCount = value;
 
