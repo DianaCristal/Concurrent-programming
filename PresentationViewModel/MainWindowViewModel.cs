@@ -39,7 +39,6 @@ namespace TP.ConcurrentProgramming.Presentation.ViewModel
         Observer = ModelLayer.Subscribe<ModelIBall>(ball =>
         {
             Balls.Add(ball);
-            //var vm = new BallViewModel(ball) { ScaleFactor = this.ScaleFactor };
             BallViewModel vm = new BallViewModel(ball) { ScaleFactor = this.ScaleFactor };
 
             BallViewModels.Add(vm);
@@ -111,17 +110,10 @@ namespace TP.ConcurrentProgramming.Presentation.ViewModel
                 RaisePropertyChanged(nameof(CanvasHeight));
                 RaisePropertyChanged(nameof(BallDimension));
 
-                    //foreach (var ballViewModel in BallViewModels)
-                    //{
-                    //    ballViewModel.ScaleFactor = scaleFactor;
-                    //}
-
                     foreach (BallViewModel ballViewModel in BallViewModels)
                     {
                         ballViewModel.ScaleFactor = scaleFactor;
                     }
-
-
 
                 }
             }

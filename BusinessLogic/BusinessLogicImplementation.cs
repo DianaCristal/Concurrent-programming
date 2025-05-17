@@ -27,12 +27,6 @@ namespace TP.ConcurrentProgramming.BusinessLogic
             layerBellow = underneathLayer == null ? UnderneathLayerAPI.GetDataLayer() : underneathLayer;
         }
 
-        //internal BusinessLogicImplementation(UnderneathLayerAPI underneathLayer)
-        //{
-        //    layerBellow = underneathLayer ?? throw new ArgumentNullException(nameof(underneathLayer));
-        //}
-
-
         #endregion ctor
 
         #region BusinessLogicAbstractAPI
