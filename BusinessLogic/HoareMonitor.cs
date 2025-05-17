@@ -10,7 +10,7 @@
 
 using System.Diagnostics;
 
-namespace TP.ConcurrentProgramming.Fundamentals
+namespace TP.ConcurrentProgramming.BusinessLogic
 {
   public abstract class HoareMonitor : IDisposable
   {

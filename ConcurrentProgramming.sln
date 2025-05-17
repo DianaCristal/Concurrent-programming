@@ -26,8 +26,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "README", "README", "{8FB176
 		README.md = README.md
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fundamentals", "Fundamentals\Fundamentals.csproj", "{DB65CD0C-67C0-51FE-2F49-5DE1EA825D0E}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -70,10 +68,6 @@ Global
 		{FD3FA340-EB7B-4037-B3AB-710E6817AC9D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FD3FA340-EB7B-4037-B3AB-710E6817AC9D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FD3FA340-EB7B-4037-B3AB-710E6817AC9D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{DB65CD0C-67C0-51FE-2F49-5DE1EA825D0E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{DB65CD0C-67C0-51FE-2F49-5DE1EA825D0E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{DB65CD0C-67C0-51FE-2F49-5DE1EA825D0E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{DB65CD0C-67C0-51FE-2F49-5DE1EA825D0E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
