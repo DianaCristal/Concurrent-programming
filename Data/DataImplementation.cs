@@ -63,8 +63,6 @@ namespace TP.ConcurrentProgramming.Data
 
     private bool Disposed = false;
 
-    // Change the declaration of the `MoveTimer` field to make it writable.
-    private Timer? MoveTimer;
     private Random RandomGenerator = new();
     private List<Ball> BallsList = [];
 

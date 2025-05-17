@@ -182,10 +182,6 @@ namespace TP.ConcurrentProgramming.BusinessLogic
             double fx = collisionScale * dx;
             double fy = collisionScale * dy;
 
-            //var v1 = new LogicVector(b1.Velocity.x - fx * m2, b1.Velocity.y - fy * m2);
-            //var v2 = new LogicVector(b2.Velocity.x + fx * m1, b2.Velocity.y + fy * m1);
-
-
             LogicVector v1 = new LogicVector(b1.Velocity.x - fx * m2, b1.Velocity.y - fy * m2);
             LogicVector v2 = new LogicVector(b2.Velocity.x + fx * m1, b2.Velocity.y + fy * m1);
 
@@ -222,7 +218,6 @@ namespace TP.ConcurrentProgramming.BusinessLogic
         public List<BallController> GetControllers()
         {
             EnterMonitor();
-            //var copy = controllers.ToList();
             List<BallController> copy = controllers.ToList();
 
             ExitMonitor();
