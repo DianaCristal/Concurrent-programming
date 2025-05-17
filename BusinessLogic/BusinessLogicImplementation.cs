@@ -133,7 +133,7 @@ namespace TP.ConcurrentProgramming.BusinessLogic
             }
 
             // Zmiana prędkości jeżeli changed jest true (jeżeli nastąpiła kolizja ze ścianą)
-            if (changed) { dataBall.Velocity = new LogicVector(velocityX, velocityY); }
+            if (changed) { dataBall.SetVelocity(velocityX, velocityY); }
 
             foreach (BallController other in monitor.GetControllers())
               {
@@ -175,11 +175,8 @@ namespace TP.ConcurrentProgramming.BusinessLogic
             double fx = collisionScale * dx;
             double fy = collisionScale * dy;
 
-            LogicVector v1 = new LogicVector(b1.Velocity.x - fx * m2, b1.Velocity.y - fy * m2);
-            LogicVector v2 = new LogicVector(b2.Velocity.x + fx * m1, b2.Velocity.y + fy * m1);
-
-            b1.Velocity = v1;
-            b2.Velocity = v2;
+            b1.SetVelocity(b1.Velocity.x - fx * m2, b1.Velocity.y - fy * m2);
+            b2.SetVelocity(b2.Velocity.x + fx * m1, b2.Velocity.y + fy * m1);
 
             double overlap = (radiusSum - Math.Sqrt(distSquared)) / 2;
             double correctionX = (dx / Math.Sqrt(distSquared)) * overlap;

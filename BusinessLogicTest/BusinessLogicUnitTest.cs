@@ -146,6 +146,11 @@ namespace TP.ConcurrentProgramming.BusinessLogic.Test
                 {
                     Position = new DataVectorFixture { x = Position.x + dx, y = Position.y + dy };
                 }
+
+                public void SetVelocity(double new_dx, double new_dy)
+                {
+                    throw new NotImplementedException();
+                }
             }
         }
 

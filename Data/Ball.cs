@@ -38,6 +38,14 @@ namespace TP.ConcurrentProgramming.Data
             }
         }
 
+        public void SetVelocity(double new_dx, double new_dy)
+        {
+            lock (_lock)
+            {
+                _velocity = new Vector(new_dx, new_dy);
+            }
+        }
+
         public IVector Velocity
         {
             get

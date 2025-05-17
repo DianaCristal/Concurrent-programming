@@ -53,6 +53,11 @@ namespace TP.ConcurrentProgramming.BusinessLogic.Test
             {
                 throw new NotImplementedException();
             }
+
+            public void SetVelocity(double new_dx, double new_dy)
+            {
+                throw new NotImplementedException();
+            }
         }
 
         private class VectorFixture : Data.IVector
