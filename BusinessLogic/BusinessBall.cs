@@ -25,6 +25,15 @@ namespace TP.ConcurrentProgramming.BusinessLogic
 
     public IPosition Position { get; private set; }
 
+    public IPosition Velocity
+    {
+        get => new Position(dataBall.Velocity.x, dataBall.Velocity.y);
+        set
+        {
+            dataBall.SetVelocity(value.x, value.y);
+        }
+    }
+
     #endregion IBall
 
     #region private

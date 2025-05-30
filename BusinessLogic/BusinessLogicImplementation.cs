@@ -14,12 +14,12 @@ using UnderneathLayerAPI = TP.ConcurrentProgramming.Data.DataAbstractAPI;
 
 namespace TP.ConcurrentProgramming.BusinessLogic
 {
-  internal class BusinessLogicImplementation : BusinessLogicAbstractAPI
-  {
-    #region ctor
+    internal class BusinessLogicImplementation : BusinessLogicAbstractAPI
+    {
+        #region ctor
 
-    public BusinessLogicImplementation() : this(null)
-    { }
+        public BusinessLogicImplementation() : this(null)
+        { }
 
         internal BusinessLogicImplementation(UnderneathLayerAPI? underneathLayer)
         {
@@ -31,78 +31,65 @@ namespace TP.ConcurrentProgramming.BusinessLogic
         #region BusinessLogicAbstractAPI
 
         public override void Dispose()
-    {
-      if (Disposed)
-        throw new ObjectDisposedException(nameof(BusinessLogicImplementation));
-      layerBellow.Dispose();
-      Disposed = true;
-    }
-
-    public override void Start(int numberOfBalls, Action<IPosition, IBall> upperLayerHandler)
-    {
-        if (Disposed)
-            throw new ObjectDisposedException(nameof(BusinessLogicImplementation));
-        if (upperLayerHandler == null)
-            throw new ArgumentNullException(nameof(upperLayerHandler));
-        layerBellow.Start(numberOfBalls, (startingPosition, databall) =>
         {
-            BallController controller = new BallController(databall, new Position(startingPosition.x, startingPosition.y), upperLayerHandler);
-        });
-    }
-
-    #endregion BusinessLogicAbstractAPI
-
-    #region private
-
-    private bool Disposed = false;
-
-    private readonly UnderneathLayerAPI layerBellow;
-
-    #endregion private
-
-    #region TestingInfrastructure
-
-    [Conditional("DEBUG")]
-    internal void CheckObjectDisposed(Action<bool> returnInstanceDisposed)
-    {
-      returnInstanceDisposed(Disposed);
-    }
-
-    #endregion TestingInfrastructure
-  }
-
-    internal class BallController
-    {
-        private readonly TP.ConcurrentProgramming.Data.IBall dataBall;
-        private readonly TP.ConcurrentProgramming.BusinessLogic.IBall logicBall;
-        private static List<BallController> allControllers = new();
-        private static readonly object syncLock = new();
-        private static BallCollisionMonitor monitor = new();
-
-
-        public BallController(Data.IBall ball, IPosition initialPosition, Action<IPosition, IBall> upperLayerHandler)
-        {
-            dataBall = ball;
-            logicBall = new Ball(dataBall);
-
-            upperLayerHandler(initialPosition, logicBall);
-
-            logicBall.NewPositionNotification += OnNewPosition;
-
-            monitor.RegisterController(this);
-
+            if (Disposed)
+                throw new ObjectDisposedException(nameof(BusinessLogicImplementation));
+            layerBellow.Dispose();
+            Disposed = true;
         }
+
+        public override void Start(int numberOfBalls, Action<IPosition, IBall> upperLayerHandler)
+        {
+            if (Disposed)
+                throw new ObjectDisposedException(nameof(BusinessLogicImplementation));
+            if (upperLayerHandler == null)
+                throw new ArgumentNullException(nameof(upperLayerHandler));
+            layerBellow.Start(numberOfBalls, (startingPosition, databall) => upperLayerHandler(new Position(startingPosition.x, startingPosition.y), AddBall(new Ball(databall))));
+        }
+
+        #endregion BusinessLogicAbstractAPI
+
+        #region private
+
+        private bool Disposed = false;
+
+        private readonly UnderneathLayerAPI layerBellow;
+
+        private readonly BallListMonitor ballMonitor = new();
+
+        private double tableWidth = BusinessLogicAbstractAPI.GetDimensions.TableWidth;
+        private double tableHeight = BusinessLogicAbstractAPI.GetDimensions.TableHeight;
+        private double radius = BusinessLogicAbstractAPI.GetDimensions.BallDimension / 2;
+
+        private IBall AddBall(IBall newBall)
+        {
+            ballMonitor.AddBall(newBall);
+            newBall.NewPositionNotification += OnNewPosition;
+            return newBall;
+        }
+
+        #endregion private
+
+        #region TestingInfrastructure
+
+        [Conditional("DEBUG")]
+        internal void CheckObjectDisposed(Action<bool> returnInstanceDisposed)
+        {
+            returnInstanceDisposed(Disposed);
+        }
+
+        #endregion TestingInfrastructure
         private void OnNewPosition(object? sender, IPosition position)
         {
-            double tableWidth = BusinessLogicAbstractAPI.GetDimensions.TableWidth;
-            double tableHeight = BusinessLogicAbstractAPI.GetDimensions.TableHeight;
-            double radius = BusinessLogicAbstractAPI.GetDimensions.BallDimension / 2;
+            if (sender == null) { return; }
+
+            IBall senderBall = (Ball)sender;
 
             double newX = position.x;
             double newY = position.y;
 
-            double velocityX = dataBall.Velocity.x;
-            double velocityY = dataBall.Velocity.y;
+            double velocityX = senderBall.Velocity.x;
+            double velocityY = senderBall.Velocity.y;
 
             bool changed = false;
 
@@ -132,34 +119,36 @@ namespace TP.ConcurrentProgramming.BusinessLogic
                 changed = true;
             }
 
+            IPosition newVelocity = new Position(velocityX, velocityY);
+
             // Zmiana prędkości jeżeli changed jest true (jeżeli nastąpiła kolizja ze ścianą)
-            if (changed) { dataBall.SetVelocity(velocityX, velocityY); }
+            if (changed) { senderBall.Velocity = newVelocity; }
 
-            foreach (BallController other in monitor.GetControllers())
-              {
-                if (other == this) continue;
+            foreach (Ball otherBall in ballMonitor.GetBallsSnapshot())
+            {
+                if (otherBall == senderBall) continue;
 
-                    IPosition other_position = other.logicBall.Position;
+                IPosition otherPosition = otherBall.Position;
 
-                    double dx = newX - other_position.x;
-                    double dy = newY - other_position.y;
-                    double distanceSquared = dx * dx + dy * dy;
-                    double radiusSum = Data.DataAbstractAPI.BallDiameter;
+                double dx = newX - otherPosition.x;
+                double dy = newY - otherPosition.y;
+                double distanceSquared = dx * dx + dy * dy;
+                double radiusSum = Data.DataAbstractAPI.BallDiameter;
 
-                    if (distanceSquared < radiusSum * radiusSum)
-                    {
-                        HandleCollision(this.dataBall, other.dataBall, position, other_position);
-                    }
+                if (distanceSquared < radiusSum * radiusSum)
+                {
+                    HandleCollision(senderBall, otherBall, position, otherPosition);
                 }
             }
+        }
 
-        private void HandleCollision(Data.IBall b1, Data.IBall b2, IPosition b1_position, IPosition b2_position)
+        private void HandleCollision(IBall b1, IBall b2, IPosition b1_position, IPosition b2_position)
         {
             double dx = b1_position.x - b2_position.x;
             double dy = b1_position.y - b2_position.y;
 
-            Data.IVector this_vel = b1.Velocity;
-            Data.IVector other_vel = b2.Velocity;
+            IPosition this_vel = b1.Velocity;
+            IPosition other_vel = b2.Velocity;
 
             double distSquared = dx * dx + dy * dy;
             double radiusSum = Data.DataAbstractAPI.BallDiameter;
@@ -178,42 +167,36 @@ namespace TP.ConcurrentProgramming.BusinessLogic
             double fx = collisionScale * dx;
             double fy = collisionScale * dy;
 
-            b1.SetVelocity(this_vel.x - fx, this_vel.y - fy);
-            b2.SetVelocity(other_vel.x + fx, other_vel.y + fy);
+            IPosition newVelocityb1 = new Position(this_vel.x - fx, this_vel.y - fy);
+            IPosition newVelocityb2 = new Position(other_vel.x + fx, other_vel.y + fy);
+
+            b1.Velocity = newVelocityb1;
+            b2.Velocity = newVelocityb2;
+        }
+
+        internal class BallListMonitor : HoareMonitor
+        {
+            private readonly List<IBall> balls = new();
+
+            public void AddBall(IBall newBall)
+            {
+                EnterMonitor();
+                balls.Add(newBall);
+                ExitMonitor();
+            }
+
+            public List<IBall> GetBallsSnapshot()
+            {
+                EnterMonitor();
+                List <IBall> listOfBalls = balls.ToList();
+                ExitMonitor();
+                return listOfBalls;
+            }
+
+            protected override ISignal CreateSignal()
+            {
+                throw new NotImplementedException("CreateSignal not used in this monitor.");
+            }
         }
     }
-
-    internal class BallCollisionMonitor : HoareMonitor
-    {
-        private readonly List<BallController> controllers = new();
-        private readonly ICondition collisionCondition;
-
-        public BallCollisionMonitor()
-        {
-            collisionCondition = CreateCondition();
-        }
-
-        public void RegisterController(BallController ctrl)
-        {
-            EnterMonitor();
-            controllers.Add(ctrl);
-            ExitMonitor();
-        }
-
-        public List<BallController> GetControllers()
-        {
-            EnterMonitor();
-            List<BallController> copy = controllers.ToList();
-
-            ExitMonitor();
-            return copy;
-        }
-
-        protected override ISignal CreateSignal()
-        {
-            throw new NotImplementedException("CreateSignal not used in this monitor.");
-        }
-
-    }
-
 }
