@@ -27,11 +27,11 @@ namespace TP.ConcurrentProgramming.Data
             for (int i = 0; i < numberOfBalls; i++)
             {
                 Vector startingPosition = new(random.Next(100, 300 - 100), random.Next(100, 300 - 100));
-                Ball newBall = new(startingPosition, new Vector((RandomGenerator.NextDouble() - 0.5) * 10, (RandomGenerator.NextDouble() - 0.5) * 10));
+                Ball newBall = new(startingPosition, new Vector((RandomGenerator.NextDouble() - 0.5) * 1000, (RandomGenerator.NextDouble() - 0.5) * 1000));
                 upperLayerHandler(startingPosition, newBall);
                 BallsList.Add(newBall);
-                newBall.StartMoving();
             }
+            BeginBallMovement();
         }
 
     #region IDisposable
@@ -68,9 +68,27 @@ namespace TP.ConcurrentProgramming.Data
 
     #endregion private
 
-    #region TestingInfrastructure
+    private void BeginBallMovement()
+    {
+        int i = 0;
+        foreach (Ball ball in BallsList)
+        {
+                ball.StartMoving(i);
+                i++;
+        }
+    }
 
-    [Conditional("DEBUG")]
+    private void Stop()
+    {
+        foreach (Ball ball in BallsList)
+        {
+            ball.StopMove();
+        }
+    }
+
+        #region TestingInfrastructure
+
+        [Conditional("DEBUG")]
     internal void CheckBallsList(Action<IEnumerable<IBall>> returnBallsList)
     {
       returnBallsList(BallsList);

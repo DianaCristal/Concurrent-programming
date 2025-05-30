@@ -8,6 +8,8 @@
 //
 //_____________________________________________________________________________________________________________________________________
 
+using System.Threading;
+
 namespace TP.ConcurrentProgramming.Data
 {
     internal class Ball : IBall
@@ -26,6 +28,7 @@ namespace TP.ConcurrentProgramming.Data
 
         public event EventHandler<IVector>? NewPositionNotification;
 
+        private readonly double Diameter = DataAbstractAPI.BallDiameter;
         private Vector _position;
         private IVector _velocity;
 
@@ -53,10 +56,9 @@ namespace TP.ConcurrentProgramming.Data
                 _velocity = value;
             }
         }
-        public double Diameter { get; } = 20.0;
 
-        private Task? movementTask;
-        private CancellationTokenSource? movementTokenSource;
+        private Thread? movementThread;
+        private volatile bool stopThread = false;
 
         #endregion IBall
 
@@ -67,29 +69,50 @@ namespace TP.ConcurrentProgramming.Data
             NewPositionNotification?.Invoke(this, _position);
         }
 
-        internal void StartMoving()
+        internal Thread StartMoving(int id)
         {
-            movementTokenSource = new CancellationTokenSource();
-            movementTask = Task.Run(() => Move(movementTokenSource.Token));
-
+            movementThread = new Thread(() => ProcessMovement(id));
+            movementThread.IsBackground = true;
+            movementThread.Start();
+            return movementThread;
         }
-        private async Task Move(CancellationToken token)
+        private void Move(Vector delta)
         {
-            try
-            {
-                while (!token.IsCancellationRequested)
-                {
-                    _position = new Vector(_position.x + _velocity.x, _position.y + _velocity.y);
-
+                    _position = new Vector(Position.x + delta.x, Position.y + delta.y);
                     RaiseNewPositionChangeNotification();
-                    await Task.Delay(20, token);
-                }
-            }
-            catch (TaskCanceledException) { }
         }
         internal void StopMove()
         {
-            movementTokenSource?.Cancel();
+            stopThread = true;
+            movementThread?.Join();
+        }
+
+        private void ProcessMovement(int id)
+        {
+            int currentIntervalMs;
+            double distance = 0.1 * (Diameter/2);
+
+            while (!stopThread)
+            {
+                try
+                {
+                    Vector velocity;
+
+                    velocity = (Vector)Velocity;
+
+                    currentIntervalMs = (int)((distance / (Math.Sqrt(Math.Pow(velocity.x, 2) + Math.Pow(velocity.y, 2)))) * 1000);
+                    double currentIntervalS = currentIntervalMs / 1000.0;
+
+                    Vector newPosition = new Vector(Velocity.x * currentIntervalS, Velocity.y * currentIntervalS);
+                    Move(newPosition);
+
+                    Thread.Sleep(currentIntervalMs);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error processing {this}: {ex.Message}");
+                }
+            }
         }
         #endregion private
     }
