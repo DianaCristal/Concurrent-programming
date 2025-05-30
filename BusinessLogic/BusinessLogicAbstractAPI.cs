@@ -64,5 +64,6 @@ public interface IPosition
   public interface IBall 
   {
     event EventHandler<IPosition> NewPositionNotification;
+    IPosition Position { get; }
   }
 }

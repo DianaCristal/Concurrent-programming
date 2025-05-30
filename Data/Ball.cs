@@ -28,33 +28,29 @@ namespace TP.ConcurrentProgramming.Data
 
         private Vector _position;
         private IVector _velocity;
-        private readonly object _lock = new();
 
         public IVector Position
         {
             get
             {
-                lock (_lock) { return _position; }
+                return _position;
             }
         }
 
         public void SetVelocity(double new_dx, double new_dy)
         {
-            lock (_lock)
-            {
-                _velocity = new Vector(new_dx, new_dy);
-            }
+            _velocity = new Vector(new_dx, new_dy);
         }
 
         public IVector Velocity
         {
             get
             {
-                lock (_lock) { return _velocity; }
+                return _velocity;
             }
-            set
+            init
             {
-                lock (_lock) { _velocity = value; }
+                _velocity = value;
             }
         }
         public double Diameter { get; } = 20.0;
@@ -83,10 +79,7 @@ namespace TP.ConcurrentProgramming.Data
             {
                 while (!token.IsCancellationRequested)
                 {
-                    lock (_lock)
-                    {
-                        _position = new Vector(_position.x + _velocity.x, _position.y + _velocity.y);
-                    }
+                    _position = new Vector(_position.x + _velocity.x, _position.y + _velocity.y);
 
                     RaiseNewPositionChangeNotification();
                     await Task.Delay(20, token);
@@ -98,11 +91,6 @@ namespace TP.ConcurrentProgramming.Data
         {
             movementTokenSource?.Cancel();
         }
-        public void CorrectPosition(double dx, double dy)
-        {
-            _position = new Vector(_position.x + dx, _position.y + dy);
-        }
-
         #endregion private
     }
 }

@@ -61,7 +61,5 @@ namespace TP.ConcurrentProgramming.Data
 
     IVector Velocity { get; }
     public abstract void SetVelocity(double new_dx, double new_dy);
-    IVector Position { get; }
-    public abstract void CorrectPosition(double dx, double dy);
     }
 }

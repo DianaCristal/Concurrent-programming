@@ -139,22 +139,22 @@ namespace TP.ConcurrentProgramming.BusinessLogic
               {
                 if (other == this) continue;
 
-                    double dx = this.dataBall.Position.x - other.dataBall.Position.x;
-                    double dy = this.dataBall.Position.y - other.dataBall.Position.y;
+                    double dx = position.x - other.logicBall.Position.x;
+                    double dy = position.y - other.logicBall.Position.y;
                     double distanceSquared = dx * dx + dy * dy;
                     double radiusSum = Data.DataAbstractAPI.BallDiameter;
 
                     if (distanceSquared < radiusSum * radiusSum)
                     {
-                        HandleCollision(this.dataBall, other.dataBall);
+                        HandleCollision(this.dataBall, other.dataBall, position, other.logicBall.Position);
                     }
                 }
             }
 
-        private void HandleCollision(Data.IBall b1, Data.IBall b2)
+        private void HandleCollision(Data.IBall b1, Data.IBall b2, IPosition b1_position, IPosition b2_position)
         {
-            double dx = b1.Position.x - b2.Position.x;
-            double dy = b1.Position.y - b2.Position.y;
+            double dx = b1_position.x - b2_position.x;
+            double dy = b1_position.y - b2_position.y;
 
             double distSquared = dx * dx + dy * dy;
             double radiusSum = Data.DataAbstractAPI.BallDiameter;
@@ -175,14 +175,6 @@ namespace TP.ConcurrentProgramming.BusinessLogic
 
             b1.SetVelocity(b1.Velocity.x - fx, b1.Velocity.y - fy);
             b2.SetVelocity(b2.Velocity.x + fx, b2.Velocity.y + fy);
-
-            double overlap = (radiusSum - Math.Sqrt(distSquared)) / 2;
-            double correctionX = (dx / Math.Sqrt(distSquared)) * overlap;
-            double correctionY = (dy / Math.Sqrt(distSquared)) * overlap;
-
-            b1.CorrectPosition(correctionX, correctionY);
-            b2.CorrectPosition(-correctionX, -correctionY);
-
         }
     }
 

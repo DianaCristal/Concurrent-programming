@@ -14,20 +14,27 @@ namespace TP.ConcurrentProgramming.BusinessLogic
   {
     public Ball(Data.IBall ball)
     {
-      ball.NewPositionNotification += RaisePositionChangeEvent;
+            Position = new Position(0, 0);
+            dataBall = ball;
+            ball.NewPositionNotification += RaisePositionChangeEvent;
     }
 
     #region IBall
 
     public event EventHandler<IPosition>? NewPositionNotification;
 
+    public IPosition Position { get; private set; }
+
     #endregion IBall
 
     #region private
 
+    private readonly Data.IBall dataBall;
+
     private void RaisePositionChangeEvent(object? sender, Data.IVector e)
     {
-      NewPositionNotification?.Invoke(this, new Position(e.x, e.y));
+            Position = new Position(e.x, e.y);
+            NewPositionNotification?.Invoke(this, Position);
     }
 
     #endregion private

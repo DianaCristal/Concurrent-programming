@@ -49,11 +49,6 @@ namespace TP.ConcurrentProgramming.BusinessLogic.Test
                 _newPositionNotification?.Invoke(this, new VectorFixture(0.0, 0.0));
             }
 
-            void Data.IBall.CorrectPosition(double dx, double dy)
-            {
-                throw new NotImplementedException();
-            }
-
             public void SetVelocity(double new_dx, double new_dy)
             {
                 throw new NotImplementedException();
