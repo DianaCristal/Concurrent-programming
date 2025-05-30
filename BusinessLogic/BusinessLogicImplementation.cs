@@ -142,7 +142,7 @@ namespace TP.ConcurrentProgramming.BusinessLogic
                     double dx = this.dataBall.Position.x - other.dataBall.Position.x;
                     double dy = this.dataBall.Position.y - other.dataBall.Position.y;
                     double distanceSquared = dx * dx + dy * dy;
-                    double radiusSum = (this.dataBall.Diameter + other.dataBall.Diameter) / 2;
+                    double radiusSum = Data.DataAbstractAPI.BallDiameter;
 
                     if (distanceSquared < radiusSum * radiusSum)
                     {
@@ -150,14 +150,14 @@ namespace TP.ConcurrentProgramming.BusinessLogic
                     }
                 }
             }
-        
+
         private void HandleCollision(Data.IBall b1, Data.IBall b2)
         {
             double dx = b1.Position.x - b2.Position.x;
             double dy = b1.Position.y - b2.Position.y;
 
             double distSquared = dx * dx + dy * dy;
-            double radiusSum = (b1.Diameter + b2.Diameter) / 2;
+            double radiusSum = Data.DataAbstractAPI.BallDiameter;
 
             if (distSquared >= radiusSum * radiusSum)
                 return;
@@ -166,17 +166,15 @@ namespace TP.ConcurrentProgramming.BusinessLogic
             double dvy = b1.Velocity.y - b2.Velocity.y;
 
             double dotProduct = dvx * dx + dvy * dy;
-            if (dotProduct >= 0) return;
+            if (dotProduct >= 0)
+                return;
 
-            double m1 = b1.Mass;
-            double m2 = b2.Mass;
-
-            double collisionScale = (2 * dotProduct) / ((m1 + m2) * distSquared);
+            double collisionScale = dotProduct / distSquared;
             double fx = collisionScale * dx;
             double fy = collisionScale * dy;
 
-            b1.SetVelocity(b1.Velocity.x - fx * m2, b1.Velocity.y - fy * m2);
-            b2.SetVelocity(b2.Velocity.x + fx * m1, b2.Velocity.y + fy * m1);
+            b1.SetVelocity(b1.Velocity.x - fx, b1.Velocity.y - fy);
+            b2.SetVelocity(b2.Velocity.x + fx, b2.Velocity.y + fy);
 
             double overlap = (radiusSum - Math.Sqrt(distSquared)) / 2;
             double correctionX = (dx / Math.Sqrt(distSquared)) * overlap;

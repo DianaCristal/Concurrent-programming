@@ -8,6 +8,8 @@
 //
 //_____________________________________________________________________________________________________________________________________
 
+using TP.ConcurrentProgramming.Data;
+
 namespace TP.ConcurrentProgramming.BusinessLogic
 {
   public abstract class BusinessLogicAbstractAPI : IDisposable
@@ -23,7 +25,7 @@ namespace TP.ConcurrentProgramming.BusinessLogic
 
     #region Layer API
 
-    public static Dimensions GetDimensions = new Dimensions(20.0, 300.0, 400.0);
+    public static Dimensions GetDimensions = new Dimensions(DataAbstractAPI.BallDiameter, 300.0, 400.0);
 
     public abstract void Start(int numberOfBalls, Action<IPosition, IBall> upperLayerHandler);
 

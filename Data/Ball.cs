@@ -57,9 +57,6 @@ namespace TP.ConcurrentProgramming.Data
                 lock (_lock) { _velocity = value; }
             }
         }
-
-
-        public double Mass { get; } = 1.0; 
         public double Diameter { get; } = 20.0;
 
         private Task? movementTask;

@@ -25,6 +25,8 @@ namespace TP.ConcurrentProgramming.Data
 
     public abstract void Start(int numberOfBalls, Action<IVector, IBall> upperLayerHandler);
 
+    public static readonly double BallDiameter = 20.0;
+
     #endregion public API
 
     #region IDisposable
@@ -60,9 +62,6 @@ namespace TP.ConcurrentProgramming.Data
     IVector Velocity { get; }
     public abstract void SetVelocity(double new_dx, double new_dy);
     IVector Position { get; }
-    double Mass { get; }
-    double Diameter { get; }
-
     public abstract void CorrectPosition(double dx, double dy);
     }
 }
