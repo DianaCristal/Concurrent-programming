@@ -139,14 +139,16 @@ namespace TP.ConcurrentProgramming.BusinessLogic
               {
                 if (other == this) continue;
 
-                    double dx = position.x - other.logicBall.Position.x;
-                    double dy = position.y - other.logicBall.Position.y;
+                    IPosition other_position = other.logicBall.Position;
+
+                    double dx = newX - other_position.x;
+                    double dy = newY - other_position.y;
                     double distanceSquared = dx * dx + dy * dy;
                     double radiusSum = Data.DataAbstractAPI.BallDiameter;
 
                     if (distanceSquared < radiusSum * radiusSum)
                     {
-                        HandleCollision(this.dataBall, other.dataBall, position, other.logicBall.Position);
+                        HandleCollision(this.dataBall, other.dataBall, position, other_position);
                     }
                 }
             }
@@ -156,14 +158,17 @@ namespace TP.ConcurrentProgramming.BusinessLogic
             double dx = b1_position.x - b2_position.x;
             double dy = b1_position.y - b2_position.y;
 
+            Data.IVector this_vel = b1.Velocity;
+            Data.IVector other_vel = b2.Velocity;
+
             double distSquared = dx * dx + dy * dy;
             double radiusSum = Data.DataAbstractAPI.BallDiameter;
 
             if (distSquared >= radiusSum * radiusSum)
                 return;
 
-            double dvx = b1.Velocity.x - b2.Velocity.x;
-            double dvy = b1.Velocity.y - b2.Velocity.y;
+            double dvx = this_vel.x - other_vel.x;
+            double dvy = this_vel.y - other_vel.y;
 
             double dotProduct = dvx * dx + dvy * dy;
             if (dotProduct >= 0)
@@ -173,8 +178,8 @@ namespace TP.ConcurrentProgramming.BusinessLogic
             double fx = collisionScale * dx;
             double fy = collisionScale * dy;
 
-            b1.SetVelocity(b1.Velocity.x - fx, b1.Velocity.y - fy);
-            b2.SetVelocity(b2.Velocity.x + fx, b2.Velocity.y + fy);
+            b1.SetVelocity(this_vel.x - fx, this_vel.y - fy);
+            b2.SetVelocity(other_vel.x + fx, other_vel.y + fy);
         }
     }
 
