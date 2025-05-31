@@ -44,9 +44,13 @@ namespace TP.ConcurrentProgramming.Presentation.Model.Test
 
     private class BusinessLogicIBallFixture : BusinessLogic.IBall
     {
+
         public IPosition Position => throw new NotImplementedException();
 
-        public event EventHandler<IPosition>? NewPositionNotification;
+            public IPosition Velocity { get; set; }// = new Position(0, 0);
+
+
+            public event EventHandler<IPosition>? NewPositionNotification;
 
       public void Dispose()
       {

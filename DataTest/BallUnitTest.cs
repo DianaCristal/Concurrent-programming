@@ -40,9 +40,10 @@ namespace TP.ConcurrentProgramming.Data.Test
 
             Assert.AreEqual(initialPosition, currentPosition);
 
-            newInstance.StartMoving();
+            newInstance.StartMoving(0);
 
             bool eventReceived = positionUpdatedEvent.WaitOne(100);
+            await Task.Delay(10); // <- zapewnia asynchroniczność
 
             newInstance.StopMove();
 
