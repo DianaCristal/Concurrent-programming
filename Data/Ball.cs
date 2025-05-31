@@ -100,7 +100,7 @@ namespace TP.ConcurrentProgramming.Data
 
                     velocity = (Vector)Velocity;
 
-                    currentIntervalMs = (int)((distance / (Math.Sqrt(Math.Pow(velocity.x, 2) + Math.Pow(velocity.y, 2)))) * 1000);
+                    currentIntervalMs = (int)((distance / (Math.Sqrt(Math.Pow(velocity.x, 2) + Math.Pow(velocity.y, 2)))) * 10000);
                     double currentIntervalS = currentIntervalMs / 1000.0;
 
                     Vector newPosition = new Vector(Velocity.x * currentIntervalS, Velocity.y * currentIntervalS);
