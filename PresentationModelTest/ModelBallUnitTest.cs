@@ -47,10 +47,9 @@ namespace TP.ConcurrentProgramming.Presentation.Model.Test
 
         public IPosition Position => throw new NotImplementedException();
 
-            public IPosition Velocity { get; set; }// = new Position(0, 0);
+        public IPosition Velocity { get; set; }// = new Position(0, 0);
 
-
-            public event EventHandler<IPosition>? NewPositionNotification;
+        public event EventHandler<IPosition>? NewPositionNotification;
 
       public void Dispose()
       {

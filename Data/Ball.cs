@@ -19,7 +19,7 @@ namespace TP.ConcurrentProgramming.Data
         internal Ball(Vector initialPosition, Vector initialVelocity)
         {
             _position = initialPosition;
-            Velocity = initialVelocity;
+            _velocity = initialVelocity;
         }
 
         #endregion ctor
