@@ -9,6 +9,8 @@
 //_____________________________________________________________________________________________________________________________________
 
 using System.Threading;
+using TP.ConcurrentProgramming.Infrastructure;
+
 
 namespace TP.ConcurrentProgramming.Data
 {
@@ -16,11 +18,23 @@ namespace TP.ConcurrentProgramming.Data
     {
         #region ctor
 
-        internal Ball(Vector initialPosition, Vector initialVelocity)
+
+        private readonly int id;
+        private readonly ILogger? logger;
+
+        internal Ball(int id, Vector initialPosition, Vector initialVelocity, ILogger? logger = null)
         {
+            this.id = id;
             _position = initialPosition;
-            _velocity = initialVelocity;
+            Velocity = initialVelocity;
+            this.logger = logger;
         }
+
+        //internal Ball(Vector initialPosition, Vector initialVelocity)
+        //{
+        //    _position = initialPosition;
+        //    Velocity = initialVelocity;
+        //}
 
         #endregion ctor
 
@@ -79,7 +93,9 @@ namespace TP.ConcurrentProgramming.Data
         private void Move(Vector delta)
         {
                     _position = new Vector(Position.x + delta.x, Position.y + delta.y);
-                    RaiseNewPositionChangeNotification();
+            logger?.Log(new LogEntry("Data", id, _position.x, _position.y, DateTime.UtcNow));
+
+            RaiseNewPositionChangeNotification();
         }
         internal void StopMove()
         {

@@ -10,6 +10,8 @@
 
 using System.Diagnostics;
 using UnderneathLayerAPI = TP.ConcurrentProgramming.Data.DataAbstractAPI;
+using TP.ConcurrentProgramming.Infrastructure;
+
 
 
 namespace TP.ConcurrentProgramming.BusinessLogic
@@ -18,13 +20,21 @@ namespace TP.ConcurrentProgramming.BusinessLogic
     {
         #region ctor
 
+        private readonly ILogger? logger;
+
+        internal BusinessLogicImplementation(UnderneathLayerAPI? underneathLayer = null, ILogger? logger = null)
+        {
+            this.logger = logger;
+            layerBellow = underneathLayer == null ? UnderneathLayerAPI.GetDataLayer() : underneathLayer;
+        }
+
         public BusinessLogicImplementation() : this(null)
         { }
 
-        internal BusinessLogicImplementation(UnderneathLayerAPI? underneathLayer)
-        {
-            layerBellow = underneathLayer == null ? UnderneathLayerAPI.GetDataLayer() : underneathLayer;
-        }
+        //internal BusinessLogicImplementation(UnderneathLayerAPI? underneathLayer)
+        //{
+        //    layerBellow = underneathLayer == null ? UnderneathLayerAPI.GetDataLayer() : underneathLayer;
+        //}
 
         #endregion ctor
 
@@ -120,6 +130,8 @@ namespace TP.ConcurrentProgramming.BusinessLogic
             }
 
             IPosition newVelocity = new Position(velocityX, velocityY);
+            logger?.Log(new LogEntry("BusinessLogic", ((Ball)senderBall).GetHashCode(), newX, newY, DateTime.UtcNow));
+
 
             // Zmiana prędkości jeżeli changed jest true (jeżeli nastąpiła kolizja ze ścianą)
             if (changed) { senderBall.Velocity = newVelocity; }
@@ -138,8 +150,13 @@ namespace TP.ConcurrentProgramming.BusinessLogic
                 if (distanceSquared < radiusSum * radiusSum)
                 {
                     HandleCollision(senderBall, otherBall, position, otherPosition);
+                    logger?.Log(new LogEntry("BusinessLogic", ((Ball)senderBall).GetHashCode(), newX, newY, DateTime.UtcNow));
+
+
                 }
+
             }
+
         }
 
         private void HandleCollision(IBall b1, IBall b2, IPosition b1_position, IPosition b2_position)

@@ -15,6 +15,14 @@ namespace TP.ConcurrentProgramming.Data
 {
   internal class DataImplementation : DataAbstractAPI
   {
+        private readonly ILogger? logger;
+
+        internal DataImplementation(ILogger? logger = null)
+        {
+            this.logger = logger;
+        }
+
+
         public override void Start(int numberOfBalls, Action<IVector, IBall> upperLayerHandler)
         {
             if (Disposed)
@@ -27,7 +35,7 @@ namespace TP.ConcurrentProgramming.Data
             for (int i = 0; i < numberOfBalls; i++)
             {
                 Vector startingPosition = new(random.Next(100, 300 - 100), random.Next(100, 300 - 100));
-                Ball newBall = new(startingPosition, new Vector((RandomGenerator.NextDouble() - 0.5) * 1000, (RandomGenerator.NextDouble() - 0.5) * 1000));
+                Ball newBall = new(i, startingPosition, new Vector((RandomGenerator.NextDouble() - 0.5) * 1000, (RandomGenerator.NextDouble() - 0.5) * 1000), logger);
                 upperLayerHandler(startingPosition, newBall);
                 BallsList.Add(newBall);
             }
