@@ -16,32 +16,52 @@ using static System.Net.Mime.MediaTypeNames;
 using UnderneathLayerAPI = TP.ConcurrentProgramming.BusinessLogic.BusinessLogicAbstractAPI;
 using System.Threading;
 using TP.ConcurrentProgramming.BusinessLogic;
+using TP.ConcurrentProgramming.Infrastructure;
 
 namespace TP.ConcurrentProgramming.Presentation.Model
 {
-  /// <summary>
-  /// Class Model - implements the <see cref="ModelAbstractApi" />
-  /// </summary>
-  internal class ModelImplementation : ModelAbstractApi
-  {
-    internal ModelImplementation() : this(null)
-    { }
+    /// <summary>
+    /// Class Model - implements the <see cref="ModelAbstractApi" />
+    /// </summary>
+    internal class ModelImplementation : ModelAbstractApi
+    {
+        //internal ModelImplementation() : this(null)
+        //{ }
 
-        internal ModelImplementation(UnderneathLayerAPI underneathLayer)
+        //      internal ModelImplementation(UnderneathLayerAPI underneathLayer)
+        //      {
+        //          layerBellow = underneathLayer == null ? UnderneathLayerAPI.GetBusinessLogicLayer() : underneathLayer;
+        //          eventObservable = Observable.FromEventPattern<BallChaneEventArgs>(this, "BallChanged");
+        //      }
+
+        private readonly ILogger logger;
+
+        internal ModelImplementation(UnderneathLayerAPI underneathLayer, ILogger logger)
         {
+            this.logger = logger;
             layerBellow = underneathLayer == null ? UnderneathLayerAPI.GetBusinessLogicLayer() : underneathLayer;
+
             eventObservable = Observable.FromEventPattern<BallChaneEventArgs>(this, "BallChanged");
         }
 
+        //internal ModelImplementation(ILogger logger)
+    //{
+    //    if (logger == null) throw new ArgumentNullException(nameof(logger));
 
-        //internal ModelImplementation(BusinessLogicAbstractAPI logicLayer)
-        //{
-        //    layerBellow = logicLayer ?? throw new ArgumentNullException(nameof(logicLayer));
-        //    eventObservable = Observable.FromEventPattern<BallChaneEventArgs>(this, "BallChanged");
-        //}
+    //    BusinessLogicAbstractAPI logic = new BusinessLogicImplementation(null, logger);
+    //    layerBellow = logic;
+    //    eventObservable = Observable.FromEventPattern<BallChaneEventArgs>(this, "BallChanged");
+    //}
 
 
-        private double canvasWidth = BusinessLogicAbstractAPI.GetDimensions.TableWidth;
+    //internal ModelImplementation(BusinessLogicAbstractAPI logicLayer)
+    //{
+    //    layerBellow = logicLayer ?? throw new ArgumentNullException(nameof(logicLayer));
+    //    eventObservable = Observable.FromEventPattern<BallChaneEventArgs>(this, "BallChanged");
+    //}
+
+
+    private double canvasWidth = BusinessLogicAbstractAPI.GetDimensions.TableWidth;
 
     private double canvasHeight = BusinessLogicAbstractAPI.GetDimensions.TableHeight;
 

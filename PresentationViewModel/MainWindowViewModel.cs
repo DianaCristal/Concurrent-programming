@@ -13,16 +13,20 @@ using System.ComponentModel;
 using TP.ConcurrentProgramming.Presentation.Model;
 using TP.ConcurrentProgramming.Presentation.ViewModel.MVVMLight;
 using ModelIBall = TP.ConcurrentProgramming.Presentation.Model.IBall;
+using TP.ConcurrentProgramming.Infrastructure;
+
 
 namespace TP.ConcurrentProgramming.Presentation.ViewModel
 {
   public class MainWindowViewModel : ViewModelBase, IDisposable
   {
-    #region ctor
+        #region ctor
 
-    public MainWindowViewModel() : this(null)
-    {
-        StartCommand = new RelayCommand(() =>
+        //public MainWindowViewModel() : this(null)
+        public MainWindowViewModel() : this(ModelAbstractApi.CreateModel(new Logger()))
+
+        {
+            StartCommand = new RelayCommand(() =>
         {
             Balls.Clear();
             Start(BallsCount);
@@ -32,8 +36,10 @@ namespace TP.ConcurrentProgramming.Presentation.ViewModel
 
     internal MainWindowViewModel(ModelAbstractApi modelLayerAPI)
     {
-        ModelLayer = modelLayerAPI == null ? ModelAbstractApi.CreateModel() : modelLayerAPI;
-        canvasWidth = ModelLayer.GetCanvasWidth();
+            //ModelLayer = modelLayerAPI == null ? ModelAbstractApi.CreateModel() : modelLayerAPI;
+            ModelLayer = modelLayerAPI == null ? ModelAbstractApi.CreateModel(new Logger()) : modelLayerAPI;
+
+            canvasWidth = ModelLayer.GetCanvasWidth();
         canvasHeight = ModelLayer.GetCanvasHeight();
         ballDimension = ModelLayer.GetBallDimension();
         Observer = ModelLayer.Subscribe<ModelIBall>(ball =>

@@ -10,6 +10,7 @@
 using System;
 using System.ComponentModel;
 using TP.ConcurrentProgramming.BusinessLogic;
+using TP.ConcurrentProgramming.Infrastructure;
 
 namespace TP.ConcurrentProgramming.Presentation.Model
 {
@@ -22,11 +23,29 @@ namespace TP.ConcurrentProgramming.Presentation.Model
 
   public abstract class ModelAbstractApi : IObservable<IBall>, IDisposable
   {
-    public static ModelAbstractApi CreateModel()
-    {
-      return modelInstance.Value;
-    }
-    public abstract double GetCanvasWidth();
+        //public static ModelAbstractApi CreateModel()
+        //{
+        //    return modelInstance.Value;
+        //}
+
+        //public static ModelAbstractApi CreateModel(ILogger logger)
+        //{
+        //    return new ModelImplementation(logger);
+        //}
+
+        public static ModelAbstractApi CreateModel()
+        {
+            return new ModelImplementation(BusinessLogicAbstractAPI.GetBusinessLogicLayer(), null);
+        }
+
+        public static ModelAbstractApi CreateModel(ILogger logger)
+        {
+            return new ModelImplementation(BusinessLogicAbstractAPI.GetBusinessLogicLayer(logger), logger);
+        }
+
+
+
+        public abstract double GetCanvasWidth();
     public abstract double GetCanvasHeight();
     public abstract double GetBallDimension();
 
@@ -46,7 +65,7 @@ namespace TP.ConcurrentProgramming.Presentation.Model
 
     #region private
 
-    private static Lazy<ModelAbstractApi> modelInstance = new Lazy<ModelAbstractApi>(() => new ModelImplementation());
+    //private static Lazy<ModelAbstractApi> modelInstance = new Lazy<ModelAbstractApi>(() => new ModelImplementation());
 
     #endregion private
   }

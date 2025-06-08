@@ -19,7 +19,9 @@ namespace TP.ConcurrentProgramming.Infrastructure
        double Y,
        DateTime Timestamp
     );
-    internal class Logger : ILogger
+    //internal class Logger : ILogger
+    public class Logger : ILogger
+
     {
         private readonly BlockingCollection<LogEntry> _queue = new(200);
         private readonly Thread _workerThread;
@@ -31,13 +33,23 @@ namespace TP.ConcurrentProgramming.Infrastructure
             _workerThread.Start();
         }
 
+        //public void Log(LogEntry entry)
+        //{
+        //    if (!_queue.TryAdd(entry))
+        //    {
+        //        // Możesz dodać fallback lub logowanie awaryjne
+        //    }
+        //}
+
         public void Log(LogEntry entry)
         {
+            Console.WriteLine($"LOG: {entry.Source} - {entry.BallId} at {entry.Timestamp}");
             if (!_queue.TryAdd(entry))
             {
-                // Możesz dodać fallback lub logowanie awaryjne
+                Console.WriteLine("Logger queue full or closed.");
             }
         }
+
 
         private void Consume()
         {
