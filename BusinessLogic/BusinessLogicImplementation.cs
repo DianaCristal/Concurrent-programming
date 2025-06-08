@@ -28,11 +28,6 @@ namespace TP.ConcurrentProgramming.BusinessLogic
         public BusinessLogicImplementation() : this(null)
         { }
 
-        //internal BusinessLogicImplementation(UnderneathLayerAPI? underneathLayer)
-        //{
-        //    layerBellow = underneathLayer == null ? UnderneathLayerAPI.GetDataLayer() : underneathLayer;
-        //}
-
         #endregion ctor
 
         #region BusinessLogicAbstractAPI
@@ -87,75 +82,6 @@ namespace TP.ConcurrentProgramming.BusinessLogic
         }
 
         #endregion TestingInfrastructure
-        //private void OnNewPosition(object? sender, IPosition position)
-        //{
-        //    if (sender == null) { return; }
-
-        //    IBall senderBall = (Ball)sender;
-
-        //    double newX = position.x;
-        //    double newY = position.y;
-
-        //    double velocityX = senderBall.Velocity.x;
-        //    double velocityY = senderBall.Velocity.y;
-
-        //    bool changed = false;
-
-        //    if (newX - radius < 0)
-        //    {
-        //        newX = radius;
-        //        velocityX = -velocityX;
-        //        changed = true;
-        //    }
-        //    else if (newX + radius > tableWidth)
-        //    {
-        //        newX = tableWidth - radius;
-        //        velocityX = -velocityX;
-        //        changed = true;
-        //    }
-
-        //    if (newY - radius < 0)
-        //    {
-        //        newY = radius;
-        //        velocityY = -velocityY;
-        //        changed = true;
-        //    }
-        //    else if (newY + radius > tableHeight)
-        //    {
-        //        newY = tableHeight - radius;
-        //        velocityY = -velocityY;
-        //        changed = true;
-        //    }
-
-        //    IPosition newVelocity = new Position(velocityX, velocityY);
-        //    logger?.Log(new Infrastructure.LogEntry("BusinessLogic", ((Ball)senderBall).GetHashCode(), newX, newY, DateTime.UtcNow));
-
-
-        //    // Zmiana prędkości jeżeli changed jest true (jeżeli nastąpiła kolizja ze ścianą)
-        //    if (changed) { senderBall.Velocity = newVelocity; }
-
-        //    foreach (Ball otherBall in ballMonitor.GetBallsSnapshot())
-        //    {
-        //        if (otherBall == senderBall) continue;
-
-        //        IPosition otherPosition = otherBall.Position;
-
-        //        double dx = newX - otherPosition.x;
-        //        double dy = newY - otherPosition.y;
-        //        double distanceSquared = dx * dx + dy * dy;
-        //        double radiusSum = Data.DataAbstractAPI.BallDiameter;
-
-        //        if (distanceSquared < radiusSum * radiusSum)
-        //        {
-        //            HandleCollision(senderBall, otherBall, position, otherPosition);
-        //            logger?.Log(new Infrastructure.LogEntry("BusinessLogic", ((Ball)senderBall).GetHashCode(), newX, newY, DateTime.UtcNow));
-
-
-        //        }
-
-        //    }
-
-        //}
 
 
         private void OnNewPosition(object? sender, IPosition position)

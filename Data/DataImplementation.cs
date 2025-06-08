@@ -53,10 +53,10 @@ namespace TP.ConcurrentProgramming.Data
         {
             Stop();
             BallsList.Clear();
-                    logger?.Stop(); // aby zakończyć wątek i opróżnić kolejkę
+            logger?.Stop();
 
-                }
-                Disposed = true;
+        }
+        Disposed = true;
       }
       else
         throw new ObjectDisposedException(nameof(DataImplementation));
