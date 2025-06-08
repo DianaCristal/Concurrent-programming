@@ -10,7 +10,6 @@
 
 using System.Diagnostics;
 using UnderneathLayerAPI = TP.ConcurrentProgramming.Data.DataAbstractAPI;
-using TP.ConcurrentProgramming.Infrastructure;
 
 
 
@@ -20,9 +19,9 @@ namespace TP.ConcurrentProgramming.BusinessLogic
     {
         #region ctor
 
-        private readonly ILogger? logger;
+        private readonly Data.ILogger? logger;
 
-        internal BusinessLogicImplementation(UnderneathLayerAPI? underneathLayer = null, ILogger? logger = null)
+        internal BusinessLogicImplementation(UnderneathLayerAPI? underneathLayer = null, Data.ILogger? logger = null)
         {
             this.logger = logger;
             layerBellow = underneathLayer == null ? UnderneathLayerAPI.GetDataLayer() : underneathLayer;
@@ -130,7 +129,7 @@ namespace TP.ConcurrentProgramming.BusinessLogic
             }
 
             IPosition newVelocity = new Position(velocityX, velocityY);
-            logger?.Log(new LogEntry("BusinessLogic", ((Ball)senderBall).GetHashCode(), newX, newY, DateTime.UtcNow));
+            logger?.Log(new Data.LogEntry("BusinessLogic", ((Ball)senderBall).GetHashCode(), newX, newY, DateTime.UtcNow));
 
 
             // Zmiana prędkości jeżeli changed jest true (jeżeli nastąpiła kolizja ze ścianą)
@@ -150,7 +149,7 @@ namespace TP.ConcurrentProgramming.BusinessLogic
                 if (distanceSquared < radiusSum * radiusSum)
                 {
                     HandleCollision(senderBall, otherBall, position, otherPosition);
-                    logger?.Log(new LogEntry("BusinessLogic", ((Ball)senderBall).GetHashCode(), newX, newY, DateTime.UtcNow));
+                    logger?.Log(new Data.LogEntry("BusinessLogic", ((Ball)senderBall).GetHashCode(), newX, newY, DateTime.UtcNow));
 
 
                 }

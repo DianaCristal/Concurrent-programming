@@ -9,8 +9,6 @@
 //_____________________________________________________________________________________________________________________________________
 
 using System.Threading;
-using TP.ConcurrentProgramming.Infrastructure;
-
 
 namespace TP.ConcurrentProgramming.Data
 {

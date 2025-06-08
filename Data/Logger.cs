@@ -4,25 +4,9 @@ using System.IO;
 using System;
 using System.Threading;
 
-namespace TP.ConcurrentProgramming.Infrastructure
+namespace TP.ConcurrentProgramming.Data
 {
-
-    public interface ILogger
-    {
-        void Log(LogEntry entry);
-        void Stop(); // zakończ i zapisz wszystko do pliku
-    }
-
-    public record LogEntry(
-       string Source,    // np. "Data", "Logic"
-       int BallId,
-       double X,
-       double Y,
-       DateTime Timestamp
-   );
-
-
-    public class Logger : ILogger
+    internal class Logger : ILogger
     {
         private readonly BlockingCollection<LogEntry> _queue = new(200);
         private readonly Thread _workerThread;
