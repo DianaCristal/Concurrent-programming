@@ -12,7 +12,10 @@ namespace TP.ConcurrentProgramming.BusinessLogic
 {
   internal class Ball : IBall
   {
-    public Ball(Data.IBall ball)
+
+        //public int BallId => dataBall.Id;
+
+        public Ball(Data.IBall ball)
     {
             Position = new Position(0, 0);
             dataBall = ball;

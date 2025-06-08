@@ -201,7 +201,7 @@ namespace TP.ConcurrentProgramming.BusinessLogic
 
             if (hitWall)
             {
-                logger?.Log(new Infrastructure.LogEntry("BusinessLogic", ((Ball)senderBall).GetHashCode(), newX, newY, DateTime.UtcNow));
+                logger?.Log(new Infrastructure.LogEntry("BusinessLogic", ((Ball)senderBall).GetHashCode(), newX, newY, DateTime.Now));
             }
 
             IPosition newVelocity = new Position(velocityX, velocityY);
@@ -227,7 +227,7 @@ namespace TP.ConcurrentProgramming.BusinessLogic
                     HandleCollision(senderBall, otherBall, position, otherPosition);
 
                     // Loguj TYLKO jeśli naprawdę była kolizja
-                    logger?.Log(new Infrastructure.LogEntry("BusinessLogic", ((Ball)senderBall).GetHashCode(), newX, newY, DateTime.UtcNow));
+                    logger?.Log(new Infrastructure.LogEntry("BusinessLogic", ((Ball)senderBall).GetHashCode(), newX, newY, DateTime.Now));
                 }
             }
         }

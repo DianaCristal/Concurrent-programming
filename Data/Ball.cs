@@ -73,6 +73,9 @@ namespace TP.ConcurrentProgramming.Data
             }
         }
 
+        //public int Id => id;
+
+
         private Thread? movementThread;
         private volatile bool stopThread = false;
 
@@ -113,11 +116,11 @@ namespace TP.ConcurrentProgramming.Data
 
             // log tylko jeśli pozycja się realnie zmieniła i od ostatniego logu minął czas
             if ((_lastLoggedPosition == null || !_lastLoggedPosition.Equals(newPosition)) &&
-                (DateTime.UtcNow - _lastLogTime) > _logInterval)
+                (DateTime.Now - _lastLogTime) > _logInterval)
             {
-                logger?.Log(new LogEntry("Data", id, newPosition.x, newPosition.y, DateTime.UtcNow));
+                logger?.Log(new LogEntry("Data", id, newPosition.x, newPosition.y, DateTime.Now));
                 _lastLoggedPosition = newPosition;
-                _lastLogTime = DateTime.UtcNow;
+                _lastLogTime = DateTime.Now;
             }
 
             _position = newPosition;

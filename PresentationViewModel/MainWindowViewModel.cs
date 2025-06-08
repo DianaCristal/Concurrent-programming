@@ -51,8 +51,7 @@ namespace TP.ConcurrentProgramming.Presentation.ViewModel
 
             // TEST loggera (usuniemy później)
             //ILogger logger = new Logger();
-            logger.Log(new LogEntry("Test", 1, 100.0, 200.0, DateTime.UtcNow));
-            logger.Stop();
+            //logger.Stop();
 
         }
 

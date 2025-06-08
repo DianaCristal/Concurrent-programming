@@ -188,10 +188,17 @@ public class Logger : ILogger
 
         public Logger()
         {
+            //_filePath = Path.Combine(
+            //    Environment.GetFolderPath(Environment.SpecialFolder.Desktop),
+            //    "diagnostics.json"
+            //);
+
+            string timestamp = DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss");
             _filePath = Path.Combine(
                 Environment.GetFolderPath(Environment.SpecialFolder.Desktop),
-                "diagnostics.json"
+                $"diagnostics_{timestamp}.json"
             );
+
 
             Console.WriteLine("[LOGGER] Initialized: " + _filePath);
 
