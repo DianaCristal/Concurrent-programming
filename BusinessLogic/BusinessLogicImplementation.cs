@@ -225,11 +225,12 @@ namespace TP.ConcurrentProgramming.BusinessLogic
                 double distanceSquared = dx * dx + dy * dy;
                 double radiusSum = Data.DataAbstractAPI.BallDiameter;
 
-                double next_dx = (newX + velocityX) - (otherPosition.x + otherVelocity.x);
-                double next_dy = (newY + velocityY) - (otherPosition.y + otherVelocity.y);
-                double next_distanceSquared = next_dx * next_dx + next_dy * next_dy;
+                double dvx = velocityX - otherVelocity.x;
+                double dvy = velocityY - otherVelocity.y;
 
-                if (distanceSquared < radiusSum * radiusSum)
+                double dotProduct = dvx * dx + dvy * dy;
+
+                if (distanceSquared < radiusSum * radiusSum && dotProduct < 0)
                 {
                     HandleCollision(senderBall, otherBall, position, otherPosition);
 
@@ -252,15 +253,10 @@ namespace TP.ConcurrentProgramming.BusinessLogic
             double distSquared = dx * dx + dy * dy;
             double radiusSum = Data.DataAbstractAPI.BallDiameter;
 
-            if (distSquared >= radiusSum * radiusSum)
-                return;
-
             double dvx = this_vel.x - other_vel.x;
             double dvy = this_vel.y - other_vel.y;
 
             double dotProduct = dvx * dx + dvy * dy;
-            if (dotProduct >= 0)
-                return;
 
             double collisionScale = dotProduct / distSquared;
             double fx = collisionScale * dx;
