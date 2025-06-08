@@ -79,7 +79,8 @@ namespace TP.ConcurrentProgramming.Presentation.Model
         throw new ObjectDisposedException(nameof(Model));
       layerBellow.Dispose();
       Disposed = true;
-    }
+            logger?.Stop();
+        }
 
     public override IDisposable Subscribe(IObserver<IBall> observer)
     {

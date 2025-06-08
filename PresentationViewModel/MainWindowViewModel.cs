@@ -23,18 +23,42 @@ namespace TP.ConcurrentProgramming.Presentation.ViewModel
         #region ctor
 
         //public MainWindowViewModel() : this(null)
-        public MainWindowViewModel() : this(ModelAbstractApi.CreateModel(new Logger()))
+        //    public MainWindowViewModel() : this(ModelAbstractApi.CreateModel(new Logger()))
 
+        //    {
+        //        StartCommand = new RelayCommand(() =>
+        //    {
+        //        Balls.Clear();
+        //        Start(BallsCount);
+        //        CanStart = false; // Dezaktywuj przycisk po pierwszym kliknięciu
+        //    }, () => CanStart);
+        //}
+
+        //private readonly ILogger logger = new Logger(); // tylko raz!
+
+        ILogger logger = new Logger();
+
+
+
+        public MainWindowViewModel() : this(ModelAbstractApi.CreateModel(new Logger()))
         {
             StartCommand = new RelayCommand(() =>
-        {
-            Balls.Clear();
-            Start(BallsCount);
-            CanStart = false; // Dezaktywuj przycisk po pierwszym kliknięciu
-        }, () => CanStart);
-    }
+            {
+                Balls.Clear();
+                Start(BallsCount);
+                CanStart = false;
+            }, () => CanStart);
 
-    internal MainWindowViewModel(ModelAbstractApi modelLayerAPI)
+            // TEST loggera (usuniemy później)
+            //ILogger logger = new Logger();
+            logger.Log(new LogEntry("Test", 1, 100.0, 200.0, DateTime.UtcNow));
+            logger.Stop();
+
+        }
+
+
+
+        internal MainWindowViewModel(ModelAbstractApi modelLayerAPI)
     {
             //ModelLayer = modelLayerAPI == null ? ModelAbstractApi.CreateModel() : modelLayerAPI;
             ModelLayer = modelLayerAPI == null ? ModelAbstractApi.CreateModel(new Logger()) : modelLayerAPI;
@@ -168,7 +192,9 @@ namespace TP.ConcurrentProgramming.Presentation.ViewModel
           Balls.Clear();
           Observer.Dispose();
           ModelLayer.Dispose();
-        }
+                    logger?.Stop();
+
+                }
 
         // TODO: free unmanaged resources (unmanaged objects) and override finalizer
         // TODO: set large fields to null
