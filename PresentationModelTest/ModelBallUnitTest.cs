@@ -44,8 +44,9 @@ namespace TP.ConcurrentProgramming.Presentation.Model.Test
 
     private class BusinessLogicIBallFixture : BusinessLogic.IBall
     {
+            public int BallId => 123; // dowolny testowy identyfikator
 
-        public IPosition Position => throw new NotImplementedException();
+            public IPosition Position => throw new NotImplementedException();
 
         public IPosition Velocity { get; set; }// = new Position(0, 0);
 

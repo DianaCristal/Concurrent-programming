@@ -127,6 +127,8 @@ namespace TP.ConcurrentProgramming.BusinessLogic.Test
 
             internal class DataBallFixture : Data.IBall
             {
+                public int BallId => 123; // dowolny testowy identyfikator
+
                 public IVector Velocity { get; set; } = new DataVectorFixture { x = 1, y = 1 };
 
                 public IVector Position { get; private set; } = new DataVectorFixture { x = 100, y = 100 };

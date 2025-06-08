@@ -61,12 +61,14 @@ namespace TP.ConcurrentProgramming.Presentation.Model
 
     public abstract void Dispose();
 
-    #endregion IDisposable
+        #endregion IDisposable
 
-    #region private
+        #region private
 
-    //private static Lazy<ModelAbstractApi> modelInstance = new Lazy<ModelAbstractApi>(() => new ModelImplementation());
+        //private static readonly Lazy<ModelAbstractApi> modelInstance = new Lazy<ModelAbstractApi>(() => new ModelImplementation());
 
-    #endregion private
-  }
+        private static readonly Lazy<ModelAbstractApi> modelInstance = new(() => new ModelImplementation(BusinessLogicAbstractAPI.GetBusinessLogicLayer(), null));
+
+        #endregion private
+    }
 }

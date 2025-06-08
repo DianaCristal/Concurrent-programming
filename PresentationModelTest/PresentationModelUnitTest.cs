@@ -9,6 +9,7 @@
 //_____________________________________________________________________________________________________________________________________
 
 using TP.ConcurrentProgramming.BusinessLogic;
+using TP.ConcurrentProgramming.Infrastructure;
 
 namespace TP.ConcurrentProgramming.Presentation.Model.Test
 {
@@ -20,7 +21,7 @@ namespace TP.ConcurrentProgramming.Presentation.Model.Test
     {
       UnderneathLayerFixture underneathLayerFixture = new UnderneathLayerFixture();
       ModelImplementation? newInstance = null;
-      using (newInstance = new(underneathLayerFixture))
+      using (newInstance = new(underneathLayerFixture, new Logger()))
       {
         newInstance.CheckObjectDisposed(x => Assert.IsFalse(x));
         newInstance.CheckUnderneathLayerAPI(x => Assert.AreSame(underneathLayerFixture, x));
@@ -37,7 +38,7 @@ namespace TP.ConcurrentProgramming.Presentation.Model.Test
     public void StartTestMethod()
     {
       UnderneathLayerFixture underneathLayerFixture = new UnderneathLayerFixture();
-      using (ModelImplementation newInstance = new(underneathLayerFixture))
+      using (ModelImplementation newInstance = new(underneathLayerFixture, new Logger()))
       {
         newInstance.CheckBallChangedEvent(x => Assert.IsTrue(x));
         IDisposable subscription = newInstance.Subscribe(x => { });
@@ -76,6 +77,13 @@ namespace TP.ConcurrentProgramming.Presentation.Model.Test
       #endregion BusinessLogicAbstractAPI
     }
 
-    #endregion testing instrumentation
-  }
+        #endregion testing instrumentation
+
+        private class DummyLogger : ILogger
+        {
+            public void Log(LogEntry entry) { /* no-op */ }
+            public void Stop() { /* no-op */ }
+        }
+
+    }
 }

@@ -28,6 +28,8 @@ namespace TP.ConcurrentProgramming.BusinessLogic.Test
 
         private class DataBallFixture : Data.IBall
         {
+            public int BallId => 123; // dowolny testowy identyfikator
+
             public Data.IVector Velocity { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
             public Data.IVector Position => throw new NotImplementedException();
