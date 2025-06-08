@@ -8,6 +8,8 @@
 //
 //_____________________________________________________________________________________________________________________________________
 
+using TP.ConcurrentProgramming.Infrastructure;
+
 namespace TP.ConcurrentProgramming.Data
 {
   public abstract class DataAbstractAPI : IDisposable
@@ -19,11 +21,17 @@ namespace TP.ConcurrentProgramming.Data
       return modelInstance.Value;
     }
 
-    #endregion Layer Factory
+        public static DataAbstractAPI GetDataLayer(ILogger logger)
+        {
+            return new DataImplementation(logger);
+        }
 
-    #region public API
 
-    public abstract void Start(int numberOfBalls, Action<IVector, IBall> upperLayerHandler);
+        #endregion Layer Factory
+
+        #region public API
+
+        public abstract void Start(int numberOfBalls, Action<IVector, IBall> upperLayerHandler);
 
     public static readonly double BallDiameter = 20.0;
 

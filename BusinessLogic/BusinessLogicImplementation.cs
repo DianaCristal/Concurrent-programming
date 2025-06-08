@@ -22,7 +22,7 @@ namespace TP.ConcurrentProgramming.BusinessLogic
         internal BusinessLogicImplementation(UnderneathLayerAPI? underneathLayer = null, Infrastructure.ILogger? logger = null)
         {
             this.logger = logger;
-            layerBellow = underneathLayer == null ? UnderneathLayerAPI.GetDataLayer() : underneathLayer;
+            layerBellow = underneathLayer == null ? UnderneathLayerAPI.GetDataLayer(logger) : underneathLayer;
         }
 
         public BusinessLogicImplementation() : this(null)
