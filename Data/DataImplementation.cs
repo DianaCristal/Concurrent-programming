@@ -98,9 +98,9 @@ namespace TP.ConcurrentProgramming.Data
         }
     }
 
-        #region TestingInfrastructure
+    #region TestingInfrastructure
 
-        [Conditional("DEBUG")]
+    [Conditional("DEBUG")]
     internal void CheckBallsList(Action<IEnumerable<IBall>> returnBallsList)
     {
       returnBallsList(BallsList);

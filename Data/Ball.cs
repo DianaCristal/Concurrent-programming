@@ -17,7 +17,6 @@ namespace TP.ConcurrentProgramming.Data
     {
         #region ctor
 
-
         private readonly int id;
         private readonly Infrastructure.ILogger? logger;
         private Vector? _lastLoggedPosition = null;
@@ -48,6 +47,14 @@ namespace TP.ConcurrentProgramming.Data
         private Vector _position;
         private IVector _velocity;
 
+        public int BallId
+        {
+            get
+            {
+                return id;
+            }
+        }
+
         public IVector Position
         {
             get
@@ -72,9 +79,6 @@ namespace TP.ConcurrentProgramming.Data
                 _velocity = value;
             }
         }
-
-        //public int Id => id;
-
 
         private Thread? movementThread;
         private volatile bool stopThread = false;
@@ -118,7 +122,7 @@ namespace TP.ConcurrentProgramming.Data
             if ((_lastLoggedPosition == null || !_lastLoggedPosition.Equals(newPosition)) &&
                 (DateTime.Now - _lastLogTime) > _logInterval)
             {
-                logger?.Log(new LogEntry("Data", id, newPosition.x, newPosition.y, DateTime.Now));
+                logger?.Log(new LogEntry("Data", id, newPosition.x, newPosition.y, DateTime.Now, "NewPosition"));
                 _lastLoggedPosition = newPosition;
                 _lastLogTime = DateTime.Now;
             }

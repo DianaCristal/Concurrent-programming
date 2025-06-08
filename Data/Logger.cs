@@ -17,7 +17,8 @@ namespace TP.ConcurrentProgramming.Infrastructure
        int BallId,
        double X,
        double Y,
-       DateTime Timestamp
+       DateTime Timestamp,
+       string Type
     );
     //internal class Logger : ILogger
     //public class Logger : ILogger

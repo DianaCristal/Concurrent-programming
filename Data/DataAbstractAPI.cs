@@ -66,9 +66,7 @@ namespace TP.ConcurrentProgramming.Data
   public interface IBall
   {
     event EventHandler<IVector> NewPositionNotification;
-        //int BallId { get; }
-
-
+        int BallId { get; }
         IVector Velocity { get; }
     public abstract void SetVelocity(double new_dx, double new_dy);
     }

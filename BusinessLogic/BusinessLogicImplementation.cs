@@ -167,8 +167,10 @@ namespace TP.ConcurrentProgramming.BusinessLogic
             double newX = position.x;
             double newY = position.y;
 
-            double velocityX = senderBall.Velocity.x;
-            double velocityY = senderBall.Velocity.y;
+            IPosition velocity = senderBall.Velocity;
+
+            double velocityX = velocity.x;
+            double velocityY = velocity.y;
 
             bool hitWall = false;
 
@@ -201,7 +203,7 @@ namespace TP.ConcurrentProgramming.BusinessLogic
 
             if (hitWall)
             {
-                logger?.Log(new Infrastructure.LogEntry("BusinessLogic", ((Ball)senderBall).GetHashCode(), newX, newY, DateTime.Now));
+                logger?.Log(new Infrastructure.LogEntry("BusinessLogic", senderBall.BallId, newX, newY, DateTime.Now, "WallColllision"));
             }
 
             IPosition newVelocity = new Position(velocityX, velocityY);
@@ -216,18 +218,24 @@ namespace TP.ConcurrentProgramming.BusinessLogic
                 if (otherBall == senderBall) continue;
 
                 IPosition otherPosition = otherBall.Position;
+                IPosition otherVelocity = otherBall.Velocity;
 
                 double dx = newX - otherPosition.x;
                 double dy = newY - otherPosition.y;
                 double distanceSquared = dx * dx + dy * dy;
                 double radiusSum = Data.DataAbstractAPI.BallDiameter;
 
+                double next_dx = (newX + velocityX) - (otherPosition.x + otherVelocity.x);
+                double next_dy = (newY + velocityY) - (otherPosition.y + otherVelocity.y);
+                double next_distanceSquared = next_dx * next_dx + next_dy * next_dy;
+
                 if (distanceSquared < radiusSum * radiusSum)
                 {
                     HandleCollision(senderBall, otherBall, position, otherPosition);
 
                     // Loguj TYLKO jeśli naprawdę była kolizja
-                    logger?.Log(new Infrastructure.LogEntry("BusinessLogic", ((Ball)senderBall).GetHashCode(), newX, newY, DateTime.Now));
+                    logger?.Log(new Infrastructure.LogEntry("BusinessLogic", senderBall.BallId, position.x, position.y, DateTime.Now, "BallCollision"));
+                    logger?.Log(new Infrastructure.LogEntry("BusinessLogic", otherBall.BallId, otherPosition.x, otherPosition.y, DateTime.Now, "BallCollision"));
                 }
             }
         }

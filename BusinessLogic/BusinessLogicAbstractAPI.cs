@@ -71,8 +71,8 @@ public interface IPosition
   public interface IBall 
   {
     event EventHandler<IPosition> NewPositionNotification;
+    public int BallId { get; }
     public IPosition Position { get; }
-
     public IPosition Velocity { get; set; }
   }
 }
