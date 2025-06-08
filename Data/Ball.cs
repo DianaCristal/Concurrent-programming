@@ -18,9 +18,9 @@ namespace TP.ConcurrentProgramming.Data
 
 
         private readonly int id;
-        private readonly ILogger? logger;
+        private readonly Infrastructure.ILogger? logger;
 
-        internal Ball(int id, Vector initialPosition, Vector initialVelocity, ILogger? logger = null)
+        internal Ball(int id, Vector initialPosition, Vector initialVelocity, Infrastructure.ILogger? logger = null)
         {
             this.id = id;
             _position = initialPosition;
@@ -91,7 +91,7 @@ namespace TP.ConcurrentProgramming.Data
         private void Move(Vector delta)
         {
                     _position = new Vector(Position.x + delta.x, Position.y + delta.y);
-            logger?.Log(new LogEntry("Data", id, _position.x, _position.y, DateTime.UtcNow));
+            logger?.Log(new Infrastructure.LogEntry("Data", id, _position.x, _position.y, DateTime.UtcNow));
 
             RaiseNewPositionChangeNotification();
         }

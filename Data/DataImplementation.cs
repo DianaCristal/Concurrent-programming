@@ -10,6 +10,7 @@
 
 using System.Diagnostics;
 
+using TP.ConcurrentProgramming.Infrastructure;
 
 namespace TP.ConcurrentProgramming.Data
 {
@@ -50,7 +51,8 @@ namespace TP.ConcurrentProgramming.Data
       {
         if (disposing)
         {
-          BallsList.Clear();
+            Stop();
+            BallsList.Clear();
         }
         Disposed = true;
       }

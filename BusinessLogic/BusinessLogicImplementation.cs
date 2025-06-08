@@ -11,17 +11,15 @@
 using System.Diagnostics;
 using UnderneathLayerAPI = TP.ConcurrentProgramming.Data.DataAbstractAPI;
 
-
-
 namespace TP.ConcurrentProgramming.BusinessLogic
 {
     internal class BusinessLogicImplementation : BusinessLogicAbstractAPI
     {
         #region ctor
 
-        private readonly Data.ILogger? logger;
+        private readonly Infrastructure.ILogger? logger;
 
-        internal BusinessLogicImplementation(UnderneathLayerAPI? underneathLayer = null, Data.ILogger? logger = null)
+        internal BusinessLogicImplementation(UnderneathLayerAPI? underneathLayer = null, Infrastructure.ILogger? logger = null)
         {
             this.logger = logger;
             layerBellow = underneathLayer == null ? UnderneathLayerAPI.GetDataLayer() : underneathLayer;
@@ -44,6 +42,7 @@ namespace TP.ConcurrentProgramming.BusinessLogic
             if (Disposed)
                 throw new ObjectDisposedException(nameof(BusinessLogicImplementation));
             layerBellow.Dispose();
+            logger?.Stop();
             Disposed = true;
         }
 
@@ -129,7 +128,7 @@ namespace TP.ConcurrentProgramming.BusinessLogic
             }
 
             IPosition newVelocity = new Position(velocityX, velocityY);
-            logger?.Log(new Data.LogEntry("BusinessLogic", ((Ball)senderBall).GetHashCode(), newX, newY, DateTime.UtcNow));
+            logger?.Log(new Infrastructure.LogEntry("BusinessLogic", ((Ball)senderBall).GetHashCode(), newX, newY, DateTime.UtcNow));
 
 
             // Zmiana prędkości jeżeli changed jest true (jeżeli nastąpiła kolizja ze ścianą)
@@ -149,7 +148,7 @@ namespace TP.ConcurrentProgramming.BusinessLogic
                 if (distanceSquared < radiusSum * radiusSum)
                 {
                     HandleCollision(senderBall, otherBall, position, otherPosition);
-                    logger?.Log(new Data.LogEntry("BusinessLogic", ((Ball)senderBall).GetHashCode(), newX, newY, DateTime.UtcNow));
+                    logger?.Log(new Infrastructure.LogEntry("BusinessLogic", ((Ball)senderBall).GetHashCode(), newX, newY, DateTime.UtcNow));
 
 
                 }

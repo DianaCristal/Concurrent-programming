@@ -9,6 +9,7 @@
 //_____________________________________________________________________________________________________________________________________
 
 using TP.ConcurrentProgramming.Data;
+using TP.ConcurrentProgramming.Infrastructure;
 
 namespace TP.ConcurrentProgramming.BusinessLogic
 {

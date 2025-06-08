@@ -62,18 +62,4 @@ namespace TP.ConcurrentProgramming.Data
     IVector Velocity { get; }
     public abstract void SetVelocity(double new_dx, double new_dy);
     }
-
-    public interface ILogger
-    {
-        void Log(LogEntry entry);
-        void Stop(); // zakończ i zapisz wszystko do pliku
-    }
-
-    public record LogEntry(
-       string Source,    // np. "Data", "Logic"
-       int BallId,
-       double X,
-       double Y,
-       DateTime Timestamp
-    );
 }
