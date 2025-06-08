@@ -137,10 +137,54 @@ namespace TP.ConcurrentProgramming.Infrastructure
     //    }
 
 
-    public class Logger : ILogger
+    //public class Logger : ILogger
+    //{
+    //    private static readonly object fileLock = new();
+    //    private readonly string _filePath;
+
+    //    public Logger()
+    //    {
+    //        _filePath = Path.Combine(
+    //            Environment.GetFolderPath(Environment.SpecialFolder.Desktop),
+    //            "diagnostics.json"
+    //        );
+
+    //        Console.WriteLine("Logger initialized. Writing to: " + _filePath);
+    //    }
+
+    //    public void Log(LogEntry entry)
+    //    {
+    //        try
+    //        {
+    //            string json = JsonSerializer.Serialize(entry);
+
+    //            lock (fileLock) // sekcja krytyczna!
+    //            {
+    //                File.AppendAllText(_filePath, json + Environment.NewLine);
+    //            }
+
+    //            Console.WriteLine("Logged: " + json);
+    //        }
+    //        catch (Exception ex)
+    //        {
+    //            Console.WriteLine("Logger EXCEPTION: " + ex.Message);
+    //        }
+    //    }
+
+    //    public void Stop()
+    //    {
+    //        // nic nie trzeba robić w tej wersji
+    //        Console.WriteLine("Logger stopped.");
+    //    }
+    //}
+
+
+public class Logger : ILogger
     {
-        private static readonly object fileLock = new();
+        private readonly BlockingCollection<LogEntry> _queue = new(500);
+        private readonly Thread _writerThread;
         private readonly string _filePath;
+        private static readonly object fileLock = new(); // sekcja krytyczna
 
         public Logger()
         {
@@ -149,34 +193,59 @@ namespace TP.ConcurrentProgramming.Infrastructure
                 "diagnostics.json"
             );
 
-            Console.WriteLine("Logger initialized. Writing to: " + _filePath);
+            Console.WriteLine("[LOGGER] Initialized: " + _filePath);
+
+            _writerThread = new Thread(Consume)
+            {
+                IsBackground = true,
+                Name = "LoggerWriterThread"
+            };
+            _writerThread.Start();
         }
 
         public void Log(LogEntry entry)
         {
+            if (!_queue.TryAdd(entry))
+            {
+                Console.WriteLine("[LOGGER] Queue full – dropping log.");
+            }
+        }
+
+        private void Consume()
+        {
             try
             {
-                string json = JsonSerializer.Serialize(entry);
-
-                lock (fileLock) // sekcja krytyczna!
+                using StreamWriter writer = new StreamWriter(_filePath, append: true);
+                foreach (var entry in _queue.GetConsumingEnumerable())
                 {
-                    File.AppendAllText(_filePath, json + Environment.NewLine);
-                }
+                    string json = JsonSerializer.Serialize(entry);
 
-                Console.WriteLine("Logged: " + json);
+                    // Sekcja krytyczna dla bezpieczeństwa dostępu
+                    lock (fileLock)
+                    {
+                        writer.WriteLine(json);
+                        writer.Flush(); // natychmiastowy zapis
+                    }
+
+                    // Można tymczasowo wypisywać do konsoli
+                    // Console.WriteLine("[LOGGER] Wrote: " + json);
+                }
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Logger EXCEPTION: " + ex.Message);
+                Console.WriteLine("[LOGGER] ERROR: " + ex.Message);
             }
         }
 
         public void Stop()
         {
-            // nic nie trzeba robić w tej wersji
-            Console.WriteLine("Logger stopped.");
+            _queue.CompleteAdding();
+            _writerThread.Join(); // czekaj aż zapisze wszystko
+            Console.WriteLine("[LOGGER] Stopped.");
         }
     }
+
+
 }
 
 

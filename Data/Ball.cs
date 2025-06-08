@@ -9,6 +9,7 @@
 //_____________________________________________________________________________________________________________________________________
 
 using System.Threading;
+using TP.ConcurrentProgramming.Infrastructure;
 
 namespace TP.ConcurrentProgramming.Data
 {
@@ -19,6 +20,9 @@ namespace TP.ConcurrentProgramming.Data
 
         private readonly int id;
         private readonly Infrastructure.ILogger? logger;
+        private Vector? _lastLoggedPosition = null;
+        private DateTime _lastLogTime = DateTime.MinValue;
+        private readonly TimeSpan _logInterval = TimeSpan.FromMilliseconds(100); // max 10 razy na sek
 
         internal Ball(int id, Vector initialPosition, Vector initialVelocity, Infrastructure.ILogger? logger = null)
         {
@@ -88,13 +92,40 @@ namespace TP.ConcurrentProgramming.Data
             movementThread.Start();
             return movementThread;
         }
+        //private void Move(Vector delta)
+        //{
+        //            _position = new Vector(Position.x + delta.x, Position.y + delta.y);
+        //    //logger?.Log(new Infrastructure.LogEntry("Data", id, _position.x, _position.y, DateTime.UtcNow));
+
+        //    if (_lastLoggedPosition == null || !_lastLoggedPosition.Equals(_position))
+        //    {
+        //        logger?.Log(new LogEntry("Data", id, _position.x, _position.y, DateTime.UtcNow));
+        //        _lastLoggedPosition = _position;
+        //    }
+
+
+        //    RaiseNewPositionChangeNotification();
+        //}
+
         private void Move(Vector delta)
         {
-                    _position = new Vector(Position.x + delta.x, Position.y + delta.y);
-            logger?.Log(new Infrastructure.LogEntry("Data", id, _position.x, _position.y, DateTime.UtcNow));
+            Vector newPosition = new Vector(Position.x + delta.x, Position.y + delta.y);
 
+            // log tylko jeśli pozycja się realnie zmieniła i od ostatniego logu minął czas
+            if ((_lastLoggedPosition == null || !_lastLoggedPosition.Equals(newPosition)) &&
+                (DateTime.UtcNow - _lastLogTime) > _logInterval)
+            {
+                logger?.Log(new LogEntry("Data", id, newPosition.x, newPosition.y, DateTime.UtcNow));
+                _lastLoggedPosition = newPosition;
+                _lastLogTime = DateTime.UtcNow;
+            }
+
+            _position = newPosition;
             RaiseNewPositionChangeNotification();
         }
+
+
+
         internal void StopMove()
         {
             stopThread = true;

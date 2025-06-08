@@ -87,9 +87,80 @@ namespace TP.ConcurrentProgramming.BusinessLogic
         }
 
         #endregion TestingInfrastructure
+        //private void OnNewPosition(object? sender, IPosition position)
+        //{
+        //    if (sender == null) { return; }
+
+        //    IBall senderBall = (Ball)sender;
+
+        //    double newX = position.x;
+        //    double newY = position.y;
+
+        //    double velocityX = senderBall.Velocity.x;
+        //    double velocityY = senderBall.Velocity.y;
+
+        //    bool changed = false;
+
+        //    if (newX - radius < 0)
+        //    {
+        //        newX = radius;
+        //        velocityX = -velocityX;
+        //        changed = true;
+        //    }
+        //    else if (newX + radius > tableWidth)
+        //    {
+        //        newX = tableWidth - radius;
+        //        velocityX = -velocityX;
+        //        changed = true;
+        //    }
+
+        //    if (newY - radius < 0)
+        //    {
+        //        newY = radius;
+        //        velocityY = -velocityY;
+        //        changed = true;
+        //    }
+        //    else if (newY + radius > tableHeight)
+        //    {
+        //        newY = tableHeight - radius;
+        //        velocityY = -velocityY;
+        //        changed = true;
+        //    }
+
+        //    IPosition newVelocity = new Position(velocityX, velocityY);
+        //    logger?.Log(new Infrastructure.LogEntry("BusinessLogic", ((Ball)senderBall).GetHashCode(), newX, newY, DateTime.UtcNow));
+
+
+        //    // Zmiana prędkości jeżeli changed jest true (jeżeli nastąpiła kolizja ze ścianą)
+        //    if (changed) { senderBall.Velocity = newVelocity; }
+
+        //    foreach (Ball otherBall in ballMonitor.GetBallsSnapshot())
+        //    {
+        //        if (otherBall == senderBall) continue;
+
+        //        IPosition otherPosition = otherBall.Position;
+
+        //        double dx = newX - otherPosition.x;
+        //        double dy = newY - otherPosition.y;
+        //        double distanceSquared = dx * dx + dy * dy;
+        //        double radiusSum = Data.DataAbstractAPI.BallDiameter;
+
+        //        if (distanceSquared < radiusSum * radiusSum)
+        //        {
+        //            HandleCollision(senderBall, otherBall, position, otherPosition);
+        //            logger?.Log(new Infrastructure.LogEntry("BusinessLogic", ((Ball)senderBall).GetHashCode(), newX, newY, DateTime.UtcNow));
+
+
+        //        }
+
+        //    }
+
+        //}
+
+
         private void OnNewPosition(object? sender, IPosition position)
         {
-            if (sender == null) { return; }
+            if (sender == null) return;
 
             IBall senderBall = (Ball)sender;
 
@@ -99,40 +170,46 @@ namespace TP.ConcurrentProgramming.BusinessLogic
             double velocityX = senderBall.Velocity.x;
             double velocityY = senderBall.Velocity.y;
 
-            bool changed = false;
+            bool hitWall = false;
 
+            // Odbicie od ścian
             if (newX - radius < 0)
             {
                 newX = radius;
                 velocityX = -velocityX;
-                changed = true;
+                hitWall = true;
             }
             else if (newX + radius > tableWidth)
             {
                 newX = tableWidth - radius;
                 velocityX = -velocityX;
-                changed = true;
+                hitWall = true;
             }
 
             if (newY - radius < 0)
             {
                 newY = radius;
                 velocityY = -velocityY;
-                changed = true;
+                hitWall = true;
             }
             else if (newY + radius > tableHeight)
             {
                 newY = tableHeight - radius;
                 velocityY = -velocityY;
-                changed = true;
+                hitWall = true;
+            }
+
+            if (hitWall)
+            {
+                logger?.Log(new Infrastructure.LogEntry("BusinessLogic", ((Ball)senderBall).GetHashCode(), newX, newY, DateTime.UtcNow));
             }
 
             IPosition newVelocity = new Position(velocityX, velocityY);
-            logger?.Log(new Infrastructure.LogEntry("BusinessLogic", ((Ball)senderBall).GetHashCode(), newX, newY, DateTime.UtcNow));
 
-
-            // Zmiana prędkości jeżeli changed jest true (jeżeli nastąpiła kolizja ze ścianą)
-            if (changed) { senderBall.Velocity = newVelocity; }
+            if (hitWall)
+            {
+                senderBall.Velocity = newVelocity;
+            }
 
             foreach (Ball otherBall in ballMonitor.GetBallsSnapshot())
             {
@@ -148,14 +225,13 @@ namespace TP.ConcurrentProgramming.BusinessLogic
                 if (distanceSquared < radiusSum * radiusSum)
                 {
                     HandleCollision(senderBall, otherBall, position, otherPosition);
+
+                    // Loguj TYLKO jeśli naprawdę była kolizja
                     logger?.Log(new Infrastructure.LogEntry("BusinessLogic", ((Ball)senderBall).GetHashCode(), newX, newY, DateTime.UtcNow));
-
-
                 }
-
             }
-
         }
+
 
         private void HandleCollision(IBall b1, IBall b2, IPosition b1_position, IPosition b2_position)
         {
