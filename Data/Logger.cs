@@ -20,6 +20,17 @@ namespace TP.ConcurrentProgramming.Infrastructure
        DateTime Timestamp,
        string Type
     );
+
+    public record CollisionLogEntry(
+       string Source,    // np. "Data", "Logic"
+       int BallId,
+       double ballX,
+       double ballY,
+       double otherBallX,
+       double otherBallY,
+       DateTime Timestamp,
+       string Type
+    );
     //internal class Logger : ILogger
     //public class Logger : ILogger
 
@@ -180,7 +191,7 @@ namespace TP.ConcurrentProgramming.Infrastructure
     //}
 
 
-public class Logger : ILogger
+    public class Logger : ILogger
     {
         private readonly BlockingCollection<LogEntry> _queue = new(500);
         private readonly Thread _writerThread;
@@ -195,11 +206,10 @@ public class Logger : ILogger
             //);
 
             string timestamp = DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss");
-            _filePath = Path.Combine(
-                Environment.GetFolderPath(Environment.SpecialFolder.Desktop),
-                $"diagnostics_{timestamp}.json"
-            );
-
+            string projectRoot = Path.GetFullPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\..\..\.."));
+            string logDirectory = Path.Combine(projectRoot, "Logs");
+            Directory.CreateDirectory(logDirectory);
+            _filePath = Path.Combine(logDirectory, $"diagnostics_{timestamp}.json");
 
             Console.WriteLine("[LOGGER] Initialized: " + _filePath);
 
