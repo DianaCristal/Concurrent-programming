@@ -13,36 +13,13 @@ namespace TP.ConcurrentProgramming.Infrastructure
         void Stop();
     }
 
-    public enum LogSource
-    {
-        Data,
-        Logic
-    }
-
-    public enum LogType
-    {
-        BallPosition,
-        BallCollision,
-        WallCollision,
-        BufferFull,
-        Error
-    }
-
-    public record LogEntry(
-       LogSource Source,
-       int BallId,
-       double X,
-       double Y,
-       DateTime Timestamp,
-       LogType Type
-    );
     public class Logger : ILogger
     {
         private readonly BlockingCollection<LogEntry> _queue = new(500);
         private readonly Thread _writerThread;
         private readonly string _filePath;
-        private static readonly object fileLock = new();
-
+        private readonly JsonSerializerOptions _jsonOptions;
+        private int bufferFull = 0;
         public Logger()
         {
             string timestamp = DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss");
@@ -50,6 +27,12 @@ namespace TP.ConcurrentProgramming.Infrastructure
             string logDirectory = Path.Combine(projectRoot, "Logs");
             Directory.CreateDirectory(logDirectory);
             _filePath = Path.Combine(logDirectory, $"diagnostics_{timestamp}.json");
+
+            _jsonOptions = new JsonSerializerOptions
+            {
+                Converters = { new JsonStringEnumConverter() },
+                WriteIndented = false
+            };
 
             _writerThread = new Thread(Consume)
             {
@@ -62,23 +45,7 @@ namespace TP.ConcurrentProgramming.Infrastructure
         {
             if (!_queue.TryAdd(entry))
             {
-
-                LogEntry overflowEntry = new LogEntry(
-                    Source: LogSource.Data,
-                    BallId: -1,
-                    X: 0,
-                    Y: 0,
-                    Timestamp: DateTime.Now,
-                    Type: LogType.BufferFull
-                );
-
-                try
-                {
-                    _queue.Add(overflowEntry);
-                }
-                catch
-                {
-                }
+                Interlocked.Increment(ref bufferFull);
             }
         }
 
@@ -86,31 +53,38 @@ namespace TP.ConcurrentProgramming.Infrastructure
         {
             try
             {
-                JsonSerializerOptions options = new JsonSerializerOptions
-                {
-                    Converters = { new JsonStringEnumConverter() },
-                    WriteIndented = false
-                };
-
                 using StreamWriter writer = new StreamWriter(_filePath, append: true);
                 foreach (LogEntry entry in _queue.GetConsumingEnumerable())
                 {
-                    string json = JsonSerializer.Serialize(entry, options);
+                    string json = JsonSerializer.Serialize(entry, _jsonOptions);
 
                     writer.WriteLine(json);
                     writer.Flush();
                 }
             }
-            catch (Exception ex)
-            {
-
-            }
+            catch (Exception){}
         }
 
         public void Stop()
         {
             _queue.CompleteAdding();
             _writerThread.Join();
+
+            if (bufferFull > 0)
+            {
+                LogEntry overflowEntry = new BufferFullLogEntry(
+                    bufferFull,
+                    DateTime.UtcNow
+                );
+
+                try
+                {
+                    using StreamWriter writer = new StreamWriter(_filePath, append: true);
+                    writer.WriteLine(JsonSerializer.Serialize(overflowEntry, _jsonOptions));
+                    writer.WriteLine($"{{\"Message\": \"{bufferFull} entries were dropped due to buffer overflow.\"}}");
+                }
+                catch (Exception) { }
+            }
         }
     }
 

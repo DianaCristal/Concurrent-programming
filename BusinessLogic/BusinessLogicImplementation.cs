@@ -101,15 +101,19 @@ namespace TP.ConcurrentProgramming.BusinessLogic
 
             bool hitWall = false;
 
+            DateTime wallCollisionTime = DateTime.MinValue;
+
             // Odbicie od ścian
             if (newX - radius < 0)
             {
+                wallCollisionTime = DateTime.UtcNow;
                 newX = radius;
                 velocityX = -velocityX;
                 hitWall = true;
             }
             else if (newX + radius > tableWidth)
             {
+                wallCollisionTime = DateTime.UtcNow;
                 newX = tableWidth - radius;
                 velocityX = -velocityX;
                 hitWall = true;
@@ -117,12 +121,14 @@ namespace TP.ConcurrentProgramming.BusinessLogic
 
             if (newY - radius < 0)
             {
+                wallCollisionTime = DateTime.UtcNow;
                 newY = radius;
                 velocityY = -velocityY;
                 hitWall = true;
             }
             else if (newY + radius > tableHeight)
             {
+                wallCollisionTime = DateTime.UtcNow;
                 newY = tableHeight - radius;
                 velocityY = -velocityY;
                 hitWall = true;
@@ -130,7 +136,8 @@ namespace TP.ConcurrentProgramming.BusinessLogic
 
             if (hitWall)
             {
-                logger?.Log(new Infrastructure.LogEntry(LogSource.Logic, senderBall.BallId, newX, newY, DateTime.Now, LogType.WallCollision));
+
+                logger?.Log(new WallCollisionLogEntry(senderBall.BallId, newX, newY, wallCollisionTime));
             }
 
             IPosition newVelocity = new Position(velocityX, velocityY);
@@ -159,11 +166,10 @@ namespace TP.ConcurrentProgramming.BusinessLogic
 
                 if (distanceSquared < radiusSum * radiusSum && dotProduct < 0)
                 {
+                    DateTime collisionTime = DateTime.UtcNow;
                     HandleCollision(senderBall, otherBall, position, otherPosition);
 
-                    // Loguj TYLKO jeśli naprawdę była kolizja
-                    logger?.Log(new LogEntry(LogSource.Logic, senderBall.BallId, position.x, position.y, DateTime.Now, LogType.BallCollision));
-                    logger?.Log(new LogEntry(LogSource.Logic, otherBall.BallId, otherPosition.x, otherPosition.y, DateTime.Now, LogType.BallCollision));
+                    logger?.Log(new BallCollisionLogEntry(senderBall.BallId, position.x, position.y, otherBall.BallId, otherPosition.x, otherPosition.y, collisionTime));
                 }
             }
         }
