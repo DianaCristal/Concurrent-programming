@@ -32,12 +32,9 @@ namespace TP.ConcurrentProgramming.Presentation.Model
         //    return new ModelImplementation(logger);
         //}
 
-        public static ModelAbstractApi CreateModel()
-        {
-            return new ModelImplementation(BusinessLogicAbstractAPI.GetBusinessLogicLayer());
-        }
+        public static ModelAbstractApi CreateModel() => modelInstance.Value;
 
-    public abstract double GetCanvasWidth();
+        public abstract double GetCanvasWidth();
     public abstract double GetCanvasHeight();
     public abstract double GetBallDimension();
 
@@ -59,7 +56,7 @@ namespace TP.ConcurrentProgramming.Presentation.Model
 
         //private static readonly Lazy<ModelAbstractApi> modelInstance = new Lazy<ModelAbstractApi>(() => new ModelImplementation());
 
-        private static readonly Lazy<ModelAbstractApi> modelInstance = new(() => new ModelImplementation(BusinessLogicAbstractAPI.GetBusinessLogicLayer()));
+        private static Lazy<ModelAbstractApi> modelInstance = new Lazy<ModelAbstractApi>(() => new ModelImplementation());
 
         #endregion private
     }

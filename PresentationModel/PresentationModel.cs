@@ -24,38 +24,14 @@ namespace TP.ConcurrentProgramming.Presentation.Model
     /// </summary>
     internal class ModelImplementation : ModelAbstractApi
     {
-        //internal ModelImplementation() : this(null)
-        //{ }
-
-        //      internal ModelImplementation(UnderneathLayerAPI underneathLayer)
-        //      {
-        //          layerBellow = underneathLayer == null ? UnderneathLayerAPI.GetBusinessLogicLayer() : underneathLayer;
-        //          eventObservable = Observable.FromEventPattern<BallChaneEventArgs>(this, "BallChanged");
-        //      }
+        internal ModelImplementation() : this(null)
+        { }
 
         internal ModelImplementation(UnderneathLayerAPI underneathLayer)
         {
             layerBellow = underneathLayer == null ? UnderneathLayerAPI.GetBusinessLogicLayer() : underneathLayer;
-
             eventObservable = Observable.FromEventPattern<BallChaneEventArgs>(this, "BallChanged");
         }
-
-        //internal ModelImplementation(ILogger logger)
-    //{
-    //    if (logger == null) throw new ArgumentNullException(nameof(logger));
-
-    //    BusinessLogicAbstractAPI logic = new BusinessLogicImplementation(null, logger);
-    //    layerBellow = logic;
-    //    eventObservable = Observable.FromEventPattern<BallChaneEventArgs>(this, "BallChanged");
-    //}
-
-
-    //internal ModelImplementation(BusinessLogicAbstractAPI logicLayer)
-    //{
-    //    layerBellow = logicLayer ?? throw new ArgumentNullException(nameof(logicLayer));
-    //    eventObservable = Observable.FromEventPattern<BallChaneEventArgs>(this, "BallChanged");
-    //}
-
 
     private double canvasWidth = BusinessLogicAbstractAPI.GetDimensions.TableWidth;
 

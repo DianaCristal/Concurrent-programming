@@ -9,7 +9,6 @@
 //_____________________________________________________________________________________________________________________________________
 
 using TP.ConcurrentProgramming.BusinessLogic;
-using TP.ConcurrentProgramming.Infrastructure;
 
 namespace TP.ConcurrentProgramming.Presentation.Model.Test
 {
@@ -21,13 +20,13 @@ namespace TP.ConcurrentProgramming.Presentation.Model.Test
     {
       UnderneathLayerFixture underneathLayerFixture = new UnderneathLayerFixture();
       ModelImplementation? newInstance = null;
-      using (newInstance = new(underneathLayerFixture, new Logger()))
-      {
-        newInstance.CheckObjectDisposed(x => Assert.IsFalse(x));
-        newInstance.CheckUnderneathLayerAPI(x => Assert.AreSame(underneathLayerFixture, x));
-        newInstance.CheckBallChangedEvent(x => Assert.IsTrue(x));
-        Assert.IsFalse(underneathLayerFixture.Disposed);
-      }
+        using (newInstance = new(underneathLayerFixture))
+        {
+            newInstance.CheckObjectDisposed(x => Assert.IsFalse(x));
+            newInstance.CheckUnderneathLayerAPI(x => Assert.AreSame(underneathLayerFixture, x));
+            newInstance.CheckBallChangedEvent(x => Assert.IsTrue(x));
+            Assert.IsFalse(underneathLayerFixture.Disposed);
+        }
       newInstance.CheckObjectDisposed(x => Assert.IsTrue(x));
       newInstance.CheckUnderneathLayerAPI(x => Assert.AreSame(underneathLayerFixture, x));
       Assert.IsTrue(underneathLayerFixture.Disposed);
@@ -38,7 +37,7 @@ namespace TP.ConcurrentProgramming.Presentation.Model.Test
     public void StartTestMethod()
     {
       UnderneathLayerFixture underneathLayerFixture = new UnderneathLayerFixture();
-      using (ModelImplementation newInstance = new(underneathLayerFixture, new Logger()))
+      using (ModelImplementation newInstance = new(underneathLayerFixture))
       {
         newInstance.CheckBallChangedEvent(x => Assert.IsTrue(x));
         IDisposable subscription = newInstance.Subscribe(x => { });
@@ -78,12 +77,6 @@ namespace TP.ConcurrentProgramming.Presentation.Model.Test
     }
 
         #endregion testing instrumentation
-
-        private class DummyLogger : ILogger
-        {
-            public void Log(LogEntry entry) { /* no-op */ }
-            public void Stop() { /* no-op */ }
-        }
 
     }
 }

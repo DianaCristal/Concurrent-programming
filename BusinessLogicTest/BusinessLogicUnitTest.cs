@@ -79,6 +79,14 @@ namespace TP.ConcurrentProgramming.BusinessLogic.Test
 
         private class DataLayerConstructorFixcure : Data.DataAbstractAPI
         {
+            public override ILogger Logger => new DummyLogger();
+
+            private class DummyLogger : ILogger
+            {
+                public void Log(LogEntry entry) { }
+                public void Stop() { }
+            }
+
             public override void Dispose()
             { }
 
@@ -91,6 +99,14 @@ namespace TP.ConcurrentProgramming.BusinessLogic.Test
         private class DataLayerDisposeFixcure : Data.DataAbstractAPI
         {
             internal bool Disposed = false;
+
+            public override ILogger Logger => new DummyLogger();
+
+            private class DummyLogger : ILogger
+            {
+                public void Log(LogEntry entry) { }
+                public void Stop() { }
+            }
 
             public override void Dispose()
             {
@@ -108,6 +124,13 @@ namespace TP.ConcurrentProgramming.BusinessLogic.Test
             internal bool StartCalled = false;
             internal int NumberOfBallseCreated = -1;
             internal DataBallFixture? LastCreatedBall;
+            public override ILogger Logger => new DummyLogger();
+
+            private class DummyLogger : ILogger
+            {
+                public void Log(LogEntry entry) { }
+                public void Stop() { }
+            }
 
             public override void Dispose() { }
 
@@ -151,7 +174,7 @@ namespace TP.ConcurrentProgramming.BusinessLogic.Test
 
                 public void SetVelocity(double new_dx, double new_dy)
                 {
-                    throw new NotImplementedException();
+                    Velocity = new DataVectorFixture { x = new_dx, y = new_dy };
                 }
             }
         }
