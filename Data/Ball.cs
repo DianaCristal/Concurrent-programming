@@ -100,7 +100,7 @@ namespace TP.ConcurrentProgramming.Data
             if ((_lastLoggedPosition == null || !_lastLoggedPosition.Equals(newPosition)) &&
                 (DateTime.Now - _lastLogTime) > _logInterval)
             {
-                logger?.Log(new LogEntry("Data", id, newPosition.x, newPosition.y, DateTime.Now, "NewPosition"));
+                logger?.Log(new LogEntry(LogSource.Data, id, newPosition.x, newPosition.y, DateTime.Now, LogType.BallPosition));
                 _lastLoggedPosition = newPosition;
                 _lastLogTime = DateTime.Now;
             }
@@ -140,7 +140,6 @@ namespace TP.ConcurrentProgramming.Data
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"Error processing {this}: {ex.Message}");
                 }
             }
         }

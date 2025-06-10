@@ -9,6 +9,7 @@
 //_____________________________________________________________________________________________________________________________________
 
 using System.Diagnostics;
+using TP.ConcurrentProgramming.Infrastructure;
 using UnderneathLayerAPI = TP.ConcurrentProgramming.Data.DataAbstractAPI;
 
 namespace TP.ConcurrentProgramming.BusinessLogic
@@ -129,7 +130,7 @@ namespace TP.ConcurrentProgramming.BusinessLogic
 
             if (hitWall)
             {
-                logger?.Log(new Infrastructure.LogEntry("BusinessLogic", senderBall.BallId, newX, newY, DateTime.Now, "WallColllision"));
+                logger?.Log(new Infrastructure.LogEntry(LogSource.Logic, senderBall.BallId, newX, newY, DateTime.Now, LogType.WallCollision));
             }
 
             IPosition newVelocity = new Position(velocityX, velocityY);
@@ -161,8 +162,8 @@ namespace TP.ConcurrentProgramming.BusinessLogic
                     HandleCollision(senderBall, otherBall, position, otherPosition);
 
                     // Loguj TYLKO jeśli naprawdę była kolizja
-                    logger?.Log(new Infrastructure.LogEntry("BusinessLogic", senderBall.BallId, position.x, position.y, DateTime.Now, "BallCollision"));
-                    logger?.Log(new Infrastructure.LogEntry("BusinessLogic", otherBall.BallId, otherPosition.x, otherPosition.y, DateTime.Now, "BallCollision"));
+                    logger?.Log(new LogEntry(LogSource.Logic, senderBall.BallId, position.x, position.y, DateTime.Now, LogType.BallCollision));
+                    logger?.Log(new LogEntry(LogSource.Logic, otherBall.BallId, otherPosition.x, otherPosition.y, DateTime.Now, LogType.BallCollision));
                 }
             }
         }

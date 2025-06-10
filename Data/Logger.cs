@@ -3,6 +3,7 @@ using System.Text.Json;
 using System.IO;
 using System;
 using System.Threading;
+using System.Text.Json.Serialization;
 
 namespace TP.ConcurrentProgramming.Infrastructure
 {
@@ -11,13 +12,29 @@ namespace TP.ConcurrentProgramming.Infrastructure
         void Log(LogEntry entry);
         void Stop();
     }
+
+    public enum LogSource
+    {
+        Data,
+        Logic
+    }
+
+    public enum LogType
+    {
+        BallPosition,
+        BallCollision,
+        WallCollision,
+        BufferFull,
+        Error
+    }
+
     public record LogEntry(
-       string Source,
+       LogSource Source,
        int BallId,
        double X,
        double Y,
        DateTime Timestamp,
-       string Type
+       LogType Type
     );
     public class Logger : ILogger
     {
@@ -34,11 +51,8 @@ namespace TP.ConcurrentProgramming.Infrastructure
             Directory.CreateDirectory(logDirectory);
             _filePath = Path.Combine(logDirectory, $"diagnostics_{timestamp}.json");
 
-            Console.WriteLine("[LOGGER] Initialized: " + _filePath);
-
             _writerThread = new Thread(Consume)
             {
-                IsBackground = true,
                 Name = "LoggerWriterThread"
             };
             _writerThread.Start();
@@ -48,15 +62,14 @@ namespace TP.ConcurrentProgramming.Infrastructure
         {
             if (!_queue.TryAdd(entry))
             {
-                Console.WriteLine("[LOGGER] Queue full – dropping log.");
 
                 LogEntry overflowEntry = new LogEntry(
-                    Source: "Logger",
+                    Source: LogSource.Data,
                     BallId: -1,
                     X: 0,
                     Y: 0,
                     Timestamp: DateTime.Now,
-                    Type: "BUFFER_FULL"
+                    Type: LogType.BufferFull
                 );
 
                 try
@@ -65,7 +78,6 @@ namespace TP.ConcurrentProgramming.Infrastructure
                 }
                 catch
                 {
-                    Console.WriteLine("[LOGGER] Failed to log BUFFER_FULL event.");
                 }
             }
         }
@@ -74,21 +86,24 @@ namespace TP.ConcurrentProgramming.Infrastructure
         {
             try
             {
+                JsonSerializerOptions options = new JsonSerializerOptions
+                {
+                    Converters = { new JsonStringEnumConverter() },
+                    WriteIndented = false
+                };
+
                 using StreamWriter writer = new StreamWriter(_filePath, append: true);
                 foreach (LogEntry entry in _queue.GetConsumingEnumerable())
                 {
-                    string json = JsonSerializer.Serialize(entry);
+                    string json = JsonSerializer.Serialize(entry, options);
 
-                    lock (fileLock)
-                    {
-                        writer.WriteLine(json);
-                        writer.Flush();
-                    }
+                    writer.WriteLine(json);
+                    writer.Flush();
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine("[LOGGER] ERROR: " + ex.Message);
+
             }
         }
 
@@ -96,7 +111,6 @@ namespace TP.ConcurrentProgramming.Infrastructure
         {
             _queue.CompleteAdding();
             _writerThread.Join();
-            Console.WriteLine("[LOGGER] Stopped.");
         }
     }
 
