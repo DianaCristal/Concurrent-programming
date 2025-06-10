@@ -10,8 +10,6 @@
 
 using System.Diagnostics;
 
-using TP.ConcurrentProgramming.Infrastructure;
-
 namespace TP.ConcurrentProgramming.Data
 {
   internal class DataImplementation : DataAbstractAPI
@@ -20,9 +18,9 @@ namespace TP.ConcurrentProgramming.Data
 
         internal DataImplementation(ILogger? logger = null)
         {
-            this.logger = logger;
+            this.logger = logger ?? new Logger();
         }
-
+        public override ILogger Logger => logger;
 
         public override void Start(int numberOfBalls, Action<IVector, IBall> upperLayerHandler)
         {

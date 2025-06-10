@@ -9,7 +9,7 @@
 //_____________________________________________________________________________________________________________________________________
 
 using System.Diagnostics;
-using TP.ConcurrentProgramming.Infrastructure;
+using TP.ConcurrentProgramming.Data;
 using UnderneathLayerAPI = TP.ConcurrentProgramming.Data.DataAbstractAPI;
 
 namespace TP.ConcurrentProgramming.BusinessLogic
@@ -18,12 +18,12 @@ namespace TP.ConcurrentProgramming.BusinessLogic
     {
         #region ctor
 
-        private readonly Infrastructure.ILogger? logger;
+        private readonly ILogger? logger;
 
-        internal BusinessLogicImplementation(UnderneathLayerAPI? underneathLayer = null, Infrastructure.ILogger? logger = null)
+        internal BusinessLogicImplementation(UnderneathLayerAPI? underneathLayer = null)
         {
-            this.logger = logger;
-            layerBellow = underneathLayer == null ? UnderneathLayerAPI.GetDataLayer(logger) : underneathLayer;
+            layerBellow = underneathLayer ?? (logger != null ? UnderneathLayerAPI.GetDataLayer(this.logger) : UnderneathLayerAPI.GetDataLayer());
+            logger = layerBellow.Logger;
         }
 
         public BusinessLogicImplementation() : this(null)
@@ -137,7 +137,7 @@ namespace TP.ConcurrentProgramming.BusinessLogic
             if (hitWall)
             {
 
-                logger?.Log(new WallCollisionLogEntry(senderBall.BallId, newX, newY, wallCollisionTime));
+                logger?.Log(new Data.WallCollisionLogEntry(senderBall.BallId, newX, newY, wallCollisionTime));
             }
 
             IPosition newVelocity = new Position(velocityX, velocityY);
@@ -169,7 +169,7 @@ namespace TP.ConcurrentProgramming.BusinessLogic
                     DateTime collisionTime = DateTime.UtcNow;
                     HandleCollision(senderBall, otherBall, position, otherPosition);
 
-                    logger?.Log(new BallCollisionLogEntry(senderBall.BallId, position.x, position.y, otherBall.BallId, otherPosition.x, otherPosition.y, collisionTime));
+                    logger?.Log(new Data.BallCollisionLogEntry(senderBall.BallId, position.x, position.y, otherBall.BallId, otherPosition.x, otherPosition.y, collisionTime));
                 }
             }
         }

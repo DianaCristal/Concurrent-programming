@@ -1,11 +1,6 @@
-﻿using System.Collections.Concurrent;
-using System.Text.Json;
-using System.IO;
-using System;
-using System.Threading;
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
 
-namespace TP.ConcurrentProgramming.Infrastructure
+namespace TP.ConcurrentProgramming.Data
 {
     public enum LogSource
     {

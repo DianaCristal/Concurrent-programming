@@ -10,7 +10,6 @@
 using System;
 using System.ComponentModel;
 using TP.ConcurrentProgramming.BusinessLogic;
-using TP.ConcurrentProgramming.Infrastructure;
 
 namespace TP.ConcurrentProgramming.Presentation.Model
 {
@@ -35,17 +34,10 @@ namespace TP.ConcurrentProgramming.Presentation.Model
 
         public static ModelAbstractApi CreateModel()
         {
-            return new ModelImplementation(BusinessLogicAbstractAPI.GetBusinessLogicLayer(), null);
+            return new ModelImplementation(BusinessLogicAbstractAPI.GetBusinessLogicLayer());
         }
 
-        public static ModelAbstractApi CreateModel(ILogger logger)
-        {
-            return new ModelImplementation(BusinessLogicAbstractAPI.GetBusinessLogicLayer(logger), logger);
-        }
-
-
-
-        public abstract double GetCanvasWidth();
+    public abstract double GetCanvasWidth();
     public abstract double GetCanvasHeight();
     public abstract double GetBallDimension();
 
@@ -67,7 +59,7 @@ namespace TP.ConcurrentProgramming.Presentation.Model
 
         //private static readonly Lazy<ModelAbstractApi> modelInstance = new Lazy<ModelAbstractApi>(() => new ModelImplementation());
 
-        private static readonly Lazy<ModelAbstractApi> modelInstance = new(() => new ModelImplementation(BusinessLogicAbstractAPI.GetBusinessLogicLayer(), null));
+        private static readonly Lazy<ModelAbstractApi> modelInstance = new(() => new ModelImplementation(BusinessLogicAbstractAPI.GetBusinessLogicLayer()));
 
         #endregion private
     }

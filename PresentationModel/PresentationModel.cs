@@ -16,7 +16,6 @@ using static System.Net.Mime.MediaTypeNames;
 using UnderneathLayerAPI = TP.ConcurrentProgramming.BusinessLogic.BusinessLogicAbstractAPI;
 using System.Threading;
 using TP.ConcurrentProgramming.BusinessLogic;
-using TP.ConcurrentProgramming.Infrastructure;
 
 namespace TP.ConcurrentProgramming.Presentation.Model
 {
@@ -34,11 +33,8 @@ namespace TP.ConcurrentProgramming.Presentation.Model
         //          eventObservable = Observable.FromEventPattern<BallChaneEventArgs>(this, "BallChanged");
         //      }
 
-        private readonly ILogger logger;
-
-        internal ModelImplementation(UnderneathLayerAPI underneathLayer, ILogger logger)
+        internal ModelImplementation(UnderneathLayerAPI underneathLayer)
         {
-            this.logger = logger;
             layerBellow = underneathLayer == null ? UnderneathLayerAPI.GetBusinessLogicLayer() : underneathLayer;
 
             eventObservable = Observable.FromEventPattern<BallChaneEventArgs>(this, "BallChanged");
@@ -79,8 +75,7 @@ namespace TP.ConcurrentProgramming.Presentation.Model
         throw new ObjectDisposedException(nameof(Model));
       layerBellow.Dispose();
       Disposed = true;
-            logger?.Stop();
-        }
+    }
 
     public override IDisposable Subscribe(IObserver<IBall> observer)
     {

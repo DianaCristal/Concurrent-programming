@@ -9,7 +9,6 @@
 //_____________________________________________________________________________________________________________________________________
 
 using TP.ConcurrentProgramming.Data;
-using TP.ConcurrentProgramming.Infrastructure;
 
 namespace TP.ConcurrentProgramming.BusinessLogic
 {
@@ -22,17 +21,11 @@ namespace TP.ConcurrentProgramming.BusinessLogic
       return modelInstance.Value;
     }
 
-        public static BusinessLogicAbstractAPI GetBusinessLogicLayer(ILogger logger)
-        {
-            return new BusinessLogicImplementation(null, logger);
-        }
+    #endregion Layer Factory
 
+    #region Layer API
 
-        #endregion Layer Factory
-
-        #region Layer API
-
-        public static Dimensions GetDimensions = new Dimensions(DataAbstractAPI.BallDiameter, 300.0, 400.0);
+    public static Dimensions GetDimensions = new Dimensions(DataAbstractAPI.BallDiameter, 300.0, 400.0);
 
     public abstract void Start(int numberOfBalls, Action<IPosition, IBall> upperLayerHandler);
 

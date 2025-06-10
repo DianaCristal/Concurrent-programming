@@ -9,7 +9,6 @@
 //_____________________________________________________________________________________________________________________________________
 
 using System.Threading;
-using TP.ConcurrentProgramming.Infrastructure;
 
 namespace TP.ConcurrentProgramming.Data
 {
@@ -18,12 +17,12 @@ namespace TP.ConcurrentProgramming.Data
         #region ctor
 
         private readonly int id;
-        private readonly Infrastructure.ILogger? logger;
+        private readonly ILogger? logger;
         private Vector? _lastLoggedPosition = null;
         private DateTime _lastLogTime = DateTime.MinValue;
         private readonly TimeSpan _logInterval = TimeSpan.FromMilliseconds(100);
 
-        internal Ball(int id, Vector initialPosition, Vector initialVelocity, Infrastructure.ILogger? logger = null)
+        internal Ball(int id, Vector initialPosition, Vector initialVelocity, ILogger? logger = null)
         {
             this.id = id;
             _position = initialPosition;

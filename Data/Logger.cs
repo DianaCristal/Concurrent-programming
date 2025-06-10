@@ -1,11 +1,8 @@
 ﻿using System.Collections.Concurrent;
 using System.Text.Json;
-using System.IO;
-using System;
-using System.Threading;
 using System.Text.Json.Serialization;
 
-namespace TP.ConcurrentProgramming.Infrastructure
+namespace TP.ConcurrentProgramming.Data
 {
     public interface ILogger
     {
@@ -81,7 +78,6 @@ namespace TP.ConcurrentProgramming.Infrastructure
                 {
                     using StreamWriter writer = new StreamWriter(_filePath, append: true);
                     writer.WriteLine(JsonSerializer.Serialize(overflowEntry, _jsonOptions));
-                    writer.WriteLine($"{{\"Message\": \"{bufferFull} entries were dropped due to buffer overflow.\"}}");
                 }
                 catch (Exception) { }
             }

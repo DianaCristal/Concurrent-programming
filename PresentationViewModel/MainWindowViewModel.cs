@@ -13,7 +13,6 @@ using System.ComponentModel;
 using TP.ConcurrentProgramming.Presentation.Model;
 using TP.ConcurrentProgramming.Presentation.ViewModel.MVVMLight;
 using ModelIBall = TP.ConcurrentProgramming.Presentation.Model.IBall;
-using TP.ConcurrentProgramming.Infrastructure;
 
 
 namespace TP.ConcurrentProgramming.Presentation.ViewModel
@@ -36,11 +35,7 @@ namespace TP.ConcurrentProgramming.Presentation.ViewModel
 
         //private readonly ILogger logger = new Logger(); // tylko raz!
 
-        ILogger logger = new Logger();
-
-
-
-        public MainWindowViewModel() : this(ModelAbstractApi.CreateModel(new Logger()))
+        public MainWindowViewModel() : this(ModelAbstractApi.CreateModel())
         {
             StartCommand = new RelayCommand(() =>
             {
@@ -60,7 +55,7 @@ namespace TP.ConcurrentProgramming.Presentation.ViewModel
         internal MainWindowViewModel(ModelAbstractApi modelLayerAPI)
     {
             //ModelLayer = modelLayerAPI == null ? ModelAbstractApi.CreateModel() : modelLayerAPI;
-            ModelLayer = modelLayerAPI == null ? ModelAbstractApi.CreateModel(new Logger()) : modelLayerAPI;
+            ModelLayer = modelLayerAPI == null ? ModelAbstractApi.CreateModel() : modelLayerAPI;
 
             canvasWidth = ModelLayer.GetCanvasWidth();
         canvasHeight = ModelLayer.GetCanvasHeight();
@@ -191,9 +186,7 @@ namespace TP.ConcurrentProgramming.Presentation.ViewModel
           Balls.Clear();
           Observer.Dispose();
           ModelLayer.Dispose();
-                    logger?.Stop();
-
-                }
+        }
 
         // TODO: free unmanaged resources (unmanaged objects) and override finalizer
         // TODO: set large fields to null
