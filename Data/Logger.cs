@@ -46,26 +46,47 @@ namespace TP.ConcurrentProgramming.Data
             }
         }
 
+        //private void Consume()
+        //{
+        //    try
+        //    {
+        //        using StreamWriter writer = new StreamWriter(_filePath, append: true);
+        //        foreach (LogEntry entry in _queue.GetConsumingEnumerable()) // blokuje do momentu, aż nie zostanie zamknięta kolekcja - czeka pasywnie az cos sie pojawi do zapisu, az nie bedzie jawnie wywolanie zamkniecia
+        //        {
+        //            string json = JsonSerializer.Serialize(entry, _jsonOptions);
+
+        //            writer.WriteLine(json);
+        //            writer.Flush();
+        //        }
+        //    }
+        //    catch (Exception){}
+        //}
+
+
         private void Consume()
         {
             try
             {
                 using StreamWriter writer = new StreamWriter(_filePath, append: true);
-                foreach (LogEntry entry in _queue.GetConsumingEnumerable())
+                writer.AutoFlush = true; // jeśli chcesz pisać od razu
+                foreach (LogEntry entry in _queue.GetConsumingEnumerable()) // blokuje do momentu, aż nie zostanie zamknięta kolekcja - czeka pasywnie az cos sie pojawi do zapisu, az nie bedzie jawnie wywolanie zamkniecia
                 {
                     string json = JsonSerializer.Serialize(entry, _jsonOptions);
 
                     writer.WriteLine(json);
-                    writer.Flush();
+                    //writer.Flush();
                 }
+                writer.Close(); // zamknie się i tak, ale jawne zamknięcie dla przejrzystości
+
             }
-            catch (Exception){}
+            catch (Exception) { }
         }
+
 
         public void Stop()
         {
-            _queue.CompleteAdding();
-            _writerThread.Join();
+            _queue.CompleteAdding(); //blokuje dalsze dodawanie i zamyka enumerator
+            _writerThread.Join();   //czeka, aż wątek zakończy zapisywanie danych
 
             if (bufferFull > 0)
             {

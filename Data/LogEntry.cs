@@ -24,12 +24,13 @@ namespace TP.ConcurrentProgramming.Data
     public abstract class LogEntry
     {
         public LogSource Source { get; init; }
-        public LogType Type { get; init; }
+        //public LogType Type { get; init; }
         public DateTime Timestamp { get; init; }
+      
         protected LogEntry(LogSource source, LogType type, DateTime timestamp)
         {
             Source = source;
-            Type = type;
+            //Type = type;
             Timestamp = timestamp;
         }
     }
