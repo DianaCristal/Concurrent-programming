@@ -52,14 +52,14 @@ namespace TP.ConcurrentProgramming.Data
             try
             {
                 using StreamWriter writer = new StreamWriter(_filePath, append: true);
-                writer.AutoFlush = true; // zapisywanie do pliku po każdym WriteLine
-                foreach (LogEntry entry in _queue.GetConsumingEnumerable()) // blokuje do momentu, aż nie zostanie zamknięta kolekcja - czeka pasywnie az cos sie pojawi do zapisu, az nie bedzie jawnie wywolanie zamkniecia
+                writer.AutoFlush = true;
+                foreach (LogEntry entry in _queue.GetConsumingEnumerable())
                 {
                     string json = JsonSerializer.Serialize(entry, _jsonOptions);
 
                     writer.WriteLine(json);
                 }
-                writer.Close(); // zamknie się i tak, ale jawne zamknięcie dla przejrzystości
+                writer.Close();
 
             }
             catch (Exception) { }
@@ -68,8 +68,8 @@ namespace TP.ConcurrentProgramming.Data
 
         public void Stop()
         {
-            _queue.CompleteAdding(); //blokuje dalsze dodawanie i zamyka enumerator
-            _writerThread.Join();   //czeka, aż wątek zakończy zapisywanie danych
+            _queue.CompleteAdding();
+            _writerThread.Join();
 
             if (bufferFull > 0)
             {

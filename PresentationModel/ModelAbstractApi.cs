@@ -22,19 +22,9 @@ namespace TP.ConcurrentProgramming.Presentation.Model
 
   public abstract class ModelAbstractApi : IObservable<IBall>, IDisposable
   {
-        //public static ModelAbstractApi CreateModel()
-        //{
-        //    return modelInstance.Value;
-        //}
+    public static ModelAbstractApi CreateModel() => modelInstance.Value;
 
-        //public static ModelAbstractApi CreateModel(ILogger logger)
-        //{
-        //    return new ModelImplementation(logger);
-        //}
-
-        public static ModelAbstractApi CreateModel() => modelInstance.Value;
-
-        public abstract double GetCanvasWidth();
+    public abstract double GetCanvasWidth();
     public abstract double GetCanvasHeight();
     public abstract double GetBallDimension();
 

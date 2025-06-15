@@ -19,45 +19,22 @@ namespace TP.ConcurrentProgramming.Presentation.ViewModel
 {
   public class MainWindowViewModel : ViewModelBase, IDisposable
   {
-        #region ctor
-
-        //public MainWindowViewModel() : this(null)
-        //    public MainWindowViewModel() : this(ModelAbstractApi.CreateModel(new Logger()))
-
-        //    {
-        //        StartCommand = new RelayCommand(() =>
-        //    {
-        //        Balls.Clear();
-        //        Start(BallsCount);
-        //        CanStart = false; // Dezaktywuj przycisk po pierwszym kliknięciu
-        //    }, () => CanStart);
-        //}
-
-        //private readonly ILogger logger = new Logger(); // tylko raz!
-
-        public MainWindowViewModel() : this(ModelAbstractApi.CreateModel())
-        {
-            StartCommand = new RelayCommand(() =>
-            {
-                Balls.Clear();
-                Start(BallsCount);
-                CanStart = false;
-            }, () => CanStart);
-
-            // TEST loggera (usuniemy później)
-            //ILogger logger = new Logger();
-            //logger.Stop();
-
-        }
-
-
-
-        internal MainWindowViewModel(ModelAbstractApi modelLayerAPI)
+    #region ctor
+    public MainWindowViewModel() : this(ModelAbstractApi.CreateModel())
     {
-            //ModelLayer = modelLayerAPI == null ? ModelAbstractApi.CreateModel() : modelLayerAPI;
-            ModelLayer = modelLayerAPI == null ? ModelAbstractApi.CreateModel() : modelLayerAPI;
+        StartCommand = new RelayCommand(() =>
+        {
+            Balls.Clear();
+            Start(BallsCount);
+            CanStart = false;
+        }, () => CanStart);
+    }
 
-            canvasWidth = ModelLayer.GetCanvasWidth();
+    internal MainWindowViewModel(ModelAbstractApi modelLayerAPI)
+    {
+        ModelLayer = modelLayerAPI == null ? ModelAbstractApi.CreateModel() : modelLayerAPI;
+
+        canvasWidth = ModelLayer.GetCanvasWidth();
         canvasHeight = ModelLayer.GetCanvasHeight();
         ballDimension = ModelLayer.GetBallDimension();
         Observer = ModelLayer.Subscribe<ModelIBall>(ball =>
@@ -70,7 +47,7 @@ namespace TP.ConcurrentProgramming.Presentation.ViewModel
 
     }
 
-        public RelayCommand StartCommand { get; }
+    public RelayCommand StartCommand { get; }
 
     private double canvasWidth;
 
@@ -260,10 +237,6 @@ namespace TP.ConcurrentProgramming.Presentation.ViewModel
                 RaisePropertyChanged(nameof(ScaledDiameter));
             }
         }
-
-
-
-
         public double ScaledLeft => Left * ScaleFactor;
         public double ScaledTop => Top * ScaleFactor;
         public double ScaledDiameter => Diameter * ScaleFactor;

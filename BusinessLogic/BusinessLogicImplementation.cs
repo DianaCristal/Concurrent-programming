@@ -103,7 +103,7 @@ namespace TP.ConcurrentProgramming.BusinessLogic
 
             DateTime wallCollisionTime = DateTime.MinValue;
 
-            WallSide wall = WallSide.Left; // domyślnie
+            WallSide wall = WallSide.Left;
 
 
             // Odbicie od ścian
