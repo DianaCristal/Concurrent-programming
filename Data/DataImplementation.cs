@@ -45,7 +45,8 @@ namespace TP.ConcurrentProgramming.Data
 
     protected virtual void Dispose(bool disposing)
     {
-      if (!Disposed)
+        Debug.WriteLine("DataImplementation.Dispose called");
+        if (!Disposed)
       {
         if (disposing)
         {

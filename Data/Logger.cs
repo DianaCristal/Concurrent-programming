@@ -85,6 +85,18 @@ namespace TP.ConcurrentProgramming.Data
                 }
                 catch (Exception) { }
             }
+
+            LogEntry shutdownEntry = new CorrectCloseLogEntry(
+                true,
+                DateTime.UtcNow
+            );
+
+            try
+            {
+                using StreamWriter writer = new StreamWriter(_filePath, append: true);
+                writer.WriteLine(JsonSerializer.Serialize(shutdownEntry, _jsonOptions));
+            }
+            catch (Exception) { }
         }
     }
 

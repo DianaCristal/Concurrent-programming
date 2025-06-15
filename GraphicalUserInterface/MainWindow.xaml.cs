@@ -8,6 +8,7 @@
 //__________________________________________________________________________________________
 
 using System;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Input;
 using TP.ConcurrentProgramming.Presentation.ViewModel;
@@ -34,8 +35,12 @@ namespace TP.ConcurrentProgramming.PresentationView
     /// <param name="e">An <see cref="EventArgs"/> that contains the event data.</param>
     protected override void OnClosed(EventArgs e)
     {
-      if (DataContext is MainWindowViewModel viewModel)
-        viewModel.Dispose();
+            Debug.WriteLine("MainWindow.OnClosed");
+            if (DataContext is MainWindowViewModel viewModel)
+            {
+                Debug.WriteLine("Disposing ViewModel");
+                viewModel.Dispose();
+            }
       base.OnClosed(e);
     }
 

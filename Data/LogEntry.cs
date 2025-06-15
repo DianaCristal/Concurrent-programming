@@ -29,6 +29,7 @@ namespace TP.ConcurrentProgramming.Data
     [JsonDerivedType(typeof(BallCollisionLogEntry), "BallCollision")]
     [JsonDerivedType(typeof(WallCollisionLogEntry), "WallCollision")]
     [JsonDerivedType(typeof(BufferFullLogEntry), "BufferFull")]
+    [JsonDerivedType(typeof(CorrectCloseLogEntry), "CorrectClose")]
     public abstract class LogEntry
     {
         public LogSource Source { get; init; }
@@ -104,6 +105,17 @@ namespace TP.ConcurrentProgramming.Data
             : base(LogSource.Data, LogType.BufferFull, timestamp)
         {
             DroppedCount = count;
+        }
+    }
+
+    public class CorrectCloseLogEntry : LogEntry
+    {
+        public bool Success { get; init; }
+
+        public CorrectCloseLogEntry(bool correct, DateTime timestamp)
+            : base(LogSource.Data, LogType.BufferFull, timestamp)
+        {
+           Success = correct;
         }
     }
 }
