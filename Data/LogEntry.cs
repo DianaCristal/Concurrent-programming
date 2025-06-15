@@ -16,6 +16,14 @@ namespace TP.ConcurrentProgramming.Data
         Error
     }
 
+    public enum WallSide
+    {
+        Left,
+        Right,
+        Top,
+        Bottom
+    }
+
     [JsonPolymorphic(TypeDiscriminatorPropertyName = "Type")]
     [JsonDerivedType(typeof(BallPositionLogEntry), "BallPosition")]
     [JsonDerivedType(typeof(BallCollisionLogEntry), "BallCollision")]
@@ -77,12 +85,17 @@ namespace TP.ConcurrentProgramming.Data
         public int BallId { get; init; }
         public double X { get; init; }
         public double Y { get; init; }
-        public WallCollisionLogEntry(int ballId, double x, double y, DateTime timestamp)
+
+        public WallSide Wall { get; init; } 
+
+
+        public WallCollisionLogEntry(int ballId, double x, double y, WallSide wall, DateTime timestamp)
             : base(LogSource.Logic, LogType.WallCollision, timestamp)
         {
             BallId = ballId;
             X = x;
             Y = y;
+            Wall = wall;
         }
     }
     public class BufferFullLogEntry : LogEntry

@@ -103,6 +103,9 @@ namespace TP.ConcurrentProgramming.BusinessLogic
 
             DateTime wallCollisionTime = DateTime.MinValue;
 
+            WallSide wall = WallSide.Left; // domyślnie
+
+
             // Odbicie od ścian
             if (newX - radius < 0)
             {
@@ -110,6 +113,9 @@ namespace TP.ConcurrentProgramming.BusinessLogic
                 newX = radius;
                 velocityX = -velocityX;
                 hitWall = true;
+
+                wall = WallSide.Left;
+
             }
             else if (newX + radius > tableWidth)
             {
@@ -117,6 +123,9 @@ namespace TP.ConcurrentProgramming.BusinessLogic
                 newX = tableWidth - radius;
                 velocityX = -velocityX;
                 hitWall = true;
+
+                wall = WallSide.Right;
+
             }
 
             if (newY - radius < 0)
@@ -125,6 +134,8 @@ namespace TP.ConcurrentProgramming.BusinessLogic
                 newY = radius;
                 velocityY = -velocityY;
                 hitWall = true;
+
+                wall = WallSide.Top;
             }
             else if (newY + radius > tableHeight)
             {
@@ -132,12 +143,14 @@ namespace TP.ConcurrentProgramming.BusinessLogic
                 newY = tableHeight - radius;
                 velocityY = -velocityY;
                 hitWall = true;
+
+                wall = WallSide.Bottom;
             }
 
             if (hitWall)
             {
 
-                logger?.Log(new Data.WallCollisionLogEntry(senderBall.BallId, newX, newY, wallCollisionTime));
+                logger?.Log(new Data.WallCollisionLogEntry(senderBall.BallId, newX, newY, wall, wallCollisionTime));
             }
 
             IPosition newVelocity = new Position(velocityX, velocityY);
